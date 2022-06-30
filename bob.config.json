@@ -1,0 +1,7 @@
+{
+  "node_url": "ws://127.0.0.1:9944",
+	"network_id": 42,
+	"query_depth": 100,
+	"tx_timeout": 30,
+	"app_id": "0xc2b252a1d9c14276e3b728ef92722ba992d05d8a83ba7f2189e87b2dc6305329"
+}
