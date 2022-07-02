@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"fmt"
 
 	dotchannel "github.com/perun-network/perun-polkadot-backend/channel"
 	"perun.network/go-perun/channel"
@@ -43,14 +42,6 @@ func (c *Client) ProposeGame(peer wire.Address, stake channel.Bal, challengeDura
 		return nil, err
 	}
 
-	// Start the on-chain event watcher. It automatically handles disputes.
-	go func() {
-		h := handler{c}
-		err := ch.Watch(h)
-		if err != nil {
-			fmt.Printf("Watcher returned with error: %v", err)
-		}
-	}()
-
-	return newGame(ch), nil
+	c.initGame(ch)
+	return c.game, nil
 }

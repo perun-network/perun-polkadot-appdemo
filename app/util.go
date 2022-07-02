@@ -75,7 +75,7 @@ func (d TicTacToeAppData) CheckFinal() (isFinal bool, winner *channel.Index) {
 
 	// Check all set.
 	for _, v := range d.Grid {
-		if v != notSet {
+		if v == notSet {
 			return false, nil
 		}
 	}

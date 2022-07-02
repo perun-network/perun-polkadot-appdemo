@@ -2,12 +2,21 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Main",
+      "name": "Launch Alice",
       "type": "go",
       "request": "launch",
       "mode": "auto",
       "program": "${workspaceFolder}",
       "args": ["-cfg", "alice.config.json", "-sk", "0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Launch Bob",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}",
+      "args": ["-cfg", "bob.config.json", "-sk", "0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89"],
       "console": "integratedTerminal"
     }
   ]

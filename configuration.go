@@ -11,19 +11,23 @@ import (
 )
 
 type ConfigurationJSON struct {
-	NodeURL     string `json:"node_url"`
-	NetworkID   uint8  `json:"network_id"`
-	QueryDepth  uint32 `json:"query_depth"`
-	DialTimeout uint32 `json:"tx_timeout"`
-	App         string `json:"app_id"`
+	Host              string `json:"host"`
+	NodeURL           string `json:"node_url"`
+	NetworkID         uint8  `json:"network_id"`
+	QueryDepth        uint32 `json:"query_depth"`
+	DialTimeout       uint32 `json:"tx_timeout"`
+	App               string `json:"app_id"`
+	ChallengeDuration uint64 `json:"challenge_duration"`
 }
 
 type Configuration struct {
-	NodeURL     string
-	NetworkID   dot.NetworkID
-	QueryDepth  types.BlockNumber
-	DialTimeout time.Duration
-	App         AppID
+	Host              string
+	NodeURL           string
+	NetworkID         dot.NetworkID
+	QueryDepth        types.BlockNumber
+	DialTimeout       time.Duration
+	App               AppID
+	ChallengeDuration uint64
 }
 
 type AppID = wallet.Address
@@ -49,10 +53,12 @@ func loadConfig(fn string) (Configuration, error) {
 	}
 
 	return Configuration{
-		NodeURL:     cfg.NodeURL,
-		NetworkID:   dot.NetworkID(cfg.NetworkID),
-		QueryDepth:  types.BlockNumber(cfg.QueryDepth),
-		DialTimeout: time.Duration(cfg.DialTimeout) * time.Second,
-		App:         appAddr,
+		Host:              cfg.Host,
+		NodeURL:           cfg.NodeURL,
+		NetworkID:         dot.NetworkID(cfg.NetworkID),
+		QueryDepth:        types.BlockNumber(cfg.QueryDepth),
+		DialTimeout:       time.Duration(cfg.DialTimeout) * time.Second,
+		App:               appAddr,
+		ChallengeDuration: cfg.ChallengeDuration,
 	}, nil
 }

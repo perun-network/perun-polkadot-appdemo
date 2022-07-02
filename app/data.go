@@ -25,7 +25,11 @@ func (d *TicTacToeAppData) String() string {
 	fmt.Fprintf(&b, "%v|%v|%v\n", d.Grid[0], d.Grid[1], d.Grid[2])
 	fmt.Fprintf(&b, "%v|%v|%v\n", d.Grid[3], d.Grid[4], d.Grid[5])
 	fmt.Fprintf(&b, "%v|%v|%v\n", d.Grid[6], d.Grid[7], d.Grid[8])
-	fmt.Fprintf(&b, "Next actor: %v\n", d.NextActor)
+	if final, winner := d.CheckFinal(); final {
+		fmt.Fprintf(&b, "Winner: %v\n", *winner)
+	} else {
+		fmt.Fprintf(&b, "Next actor: %v\n", d.NextActor)
+	}
 	return b.String()
 }
 
@@ -69,12 +73,12 @@ func (d *TicTacToeAppData) Clone() channel.Data {
 	return &_d
 }
 
-func (d *TicTacToeAppData) Set(x, y int, actorIdx channel.Index) {
+func (d *TicTacToeAppData) Set(row, col int, actorIdx channel.Index) {
 	if d.NextActor != uint8safe(uint16(actorIdx)) {
 		panic("invalid actor")
 	}
 	v := makeFieldValueFromPlayerIdx(actorIdx)
-	d.Grid[y*3+x] = v
+	d.Grid[col*3+row] = v
 	d.NextActor = calcNextActor(d.NextActor)
 }
 

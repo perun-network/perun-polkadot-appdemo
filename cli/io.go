@@ -32,7 +32,6 @@ func (io IO) Run(reader *bufio.Reader, writer *bufio.Writer) error {
 	}()
 
 	go func() {
-		println("start reading output items")
 		for text := range io.out {
 			_, err := writer.WriteString(text)
 			writer.Flush()

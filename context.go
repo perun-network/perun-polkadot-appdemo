@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	ContextKeyClient      = "Client"
-	ContextKeyGame        = "Game"
-	ContextKeyAddressBook = "AddressBook"
+	ContextKeyClient            = "Client"
+	ContextKeyAddressBook       = "AddressBook"
+	ContextKeyChallengeDuration = "ChallengeDuration"
 )
 
 type Context cli.IO
@@ -79,4 +79,17 @@ func (c Context) SetPeerAddress(name string, wireAddr wire.Address, hostAddr str
 	addrBook[name] = wireAddr
 
 	return nil
+}
+
+func (c Context) ChallengeDuration() (uint64, error) {
+	durationIface, ok := cli.IO(c).ContextValue(ContextKeyChallengeDuration)
+	if !ok {
+		return 0, fmt.Errorf("could not load challenge duration")
+	}
+
+	duration, ok := durationIface.(uint64)
+	if !ok {
+		return 0, fmt.Errorf("wrong type")
+	}
+	return duration, nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/perun-network/perun-polkadot-appdemo/app"
 	"github.com/perun-network/perun-polkadot-appdemo/cli"
 	"github.com/perun-network/perun-polkadot-appdemo/client"
+	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	"perun.network/go-perun/channel"
 )
 
@@ -34,11 +35,16 @@ func main() {
 	channel.RegisterApp(app)
 
 	init := func(io cli.IO) error {
+		api, err := substrate.NewAPI(cfg.NodeURL, cfg.NetworkID)
+		if err != nil {
+			return err
+		}
+
 		c, err := client.NewClient(
 			*skFlag,
-			cfg.NodeURL,
-			cfg.NetworkID,
+			api,
 			cfg.QueryDepth,
+			cfg.Host,
 			cfg.DialTimeout,
 			app,
 			io,
@@ -48,6 +54,7 @@ func main() {
 		}
 		io.SetContextValue(ContextKeyClient, c)
 		io.SetContextValue(ContextKeyAddressBook, make(AddressBook))
+		io.SetContextValue(ContextKeyChallengeDuration, cfg.ChallengeDuration)
 		return nil
 	}
 	err = cli.Run(init, commands)

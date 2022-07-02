@@ -1,8 +1,9 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/perun-network/perun-polkadot-appdemo/cli"
-	"github.com/perun-network/perun-polkadot-appdemo/client"
 )
 
 var commands = []cli.Command{
@@ -24,6 +25,8 @@ var commands = []cli.Command{
 				io.Print("Error setting peer address: " + err.Error())
 				return
 			}
+
+			io.Print(fmt.Sprintf("Added %v with wire address %v and network address %v to known peers.", name, wireAddr, hostAddr))
 		},
 		Help: "addpeer [name:string] [id:addr] [host:string]",
 	},
@@ -31,11 +34,17 @@ var commands = []cli.Command{
 		Name: "propose",
 		Func: func(io cli.IO, args []string) {
 			// Parse arguments.
-			if len(args) != 3 {
+			if len(args) != 2 {
 				io.Print("Invalid number of arguments.")
 				return
 			}
-			peer, stake, challengeDuration := args[0], parseBigInt(args[1]), parseInt64(args[2])
+			peer, stake := args[0], parseBigInt(args[1])
+
+			challengeDuration, err := Context(io).ChallengeDuration()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
 
 			// Get peer address.
 			peerAddr, err := Context(io).PeerAddress(peer)
@@ -52,37 +61,59 @@ var commands = []cli.Command{
 			}
 
 			// Propose game.
-			g, err := c.ProposeGame(peerAddr, stake, uint64(challengeDuration))
+			io.Print(fmt.Sprintf("Proposing game to %v (%v)...", peer, peerAddr))
+			_, err = c.ProposeGame(peerAddr, stake, uint64(challengeDuration))
 			if err != nil {
-				io.Print(err.Error())
+				io.Print("Error: " + err.Error())
 				return
 			}
-			io.SetContextValue(ContextKeyGame, g)
-			io.Print(g.String())
 		},
-		Help: "propose [peer:addr] [stake:int] [challengeDuration:int]",
+		Help: "propose [peer:string] [stake:int]",
 	},
 	{
 		Name: "set",
 		Func: func(io cli.IO, args []string) {
 			// Parse arguments.
-			x, y := parseInt64(args[0]), parseInt64(args[1])
+			row, column := parseInt64(args[0])-1, parseInt64(args[1])-1
 
 			// Get game state.
-			gUntyped, ok := io.ContextValue(ContextKeyGame)
-			if !ok {
-				io.Print("Game not initialized.")
+			c, err := Context(io).Client()
+			if err != nil {
+				io.Print(err.Error())
 				return
 			}
-			g := gUntyped.(*client.Game)
+			g, err := c.Game()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
 
 			// Perform game action.
-			err := g.Set(int(x), int(y))
+			io.Print(fmt.Sprintf("Proposing state update: place mark at (%v, %v)", row, column))
+			err = g.Set(int(row), int(column))
 			if err != nil {
 				io.Print("Error performing game action: " + err.Error())
 				return
 			}
+			io.Print("Update accepted.")
 		},
-		Help: "set [x:int] [y:int]",
+		Help: "set [row:int] [column:int]",
+	},
+	{
+		Name: "balance",
+		Func: func(io cli.IO, args []string) {
+			c, err := Context(io).Client()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+			bal, err := c.Balance()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+			io.Print("Balance: " + bal.String())
+		},
+		Help: "balance\nShow my balance.",
 	},
 }

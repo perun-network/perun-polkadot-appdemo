@@ -19,14 +19,9 @@ type (
 
 func setupChain(
 	acc pwallet.Account,
-	nodeURL string,
-	networkID dot.NetworkID,
+	api *dot.API,
 	queryDepth types.BlockNumber,
 ) (*chain, error) {
-	api, err := dot.NewAPI(nodeURL, networkID)
-	if err != nil {
-		return nil, err
-	}
 	perun := pallet.NewPallet(pallet.NewPerunPallet(api), api.Metadata())
 	funder := pallet.NewFunder(perun, acc, 3)
 	adj := pallet.NewAdjudicator(acc, perun, api, queryDepth)

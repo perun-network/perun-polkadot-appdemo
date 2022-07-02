@@ -1,7 +1,16 @@
 {
+	"host": "0.0.0.0:5751",
   "node_url": "ws://127.0.0.1:9944",
 	"network_id": 42,
 	"query_depth": 100,
 	"tx_timeout": 30,
-	"app_id": "0xc2b252a1d9c14276e3b728ef92722ba992d05d8a83ba7f2189e87b2dc6305329"
+	"app_id": "0xc2b252a1d9c14276e3b728ef92722ba992d05d8a83ba7f2189e87b2dc6305329",
+	"challenge_duration": 60,
+	"peers": [
+		{
+			"name": "alice",
+			"wire_address": "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+			"ip_address": "127.0.0.1:5750"
+		}
+	]
 }

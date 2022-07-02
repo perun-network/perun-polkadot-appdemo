@@ -56,7 +56,7 @@ func (h handler) HandleProposal(p pclient.ChannelProposal, r *pclient.ProposalRe
 
 		// Propose to user.
 		proposer := lcp.Peers[proposerIdx]
-		msg := fmt.Sprintf("Incoming game proposal: Player %v, stake = %v. Accept? (y/n)", proposer, ourStake)
+		msg := fmt.Sprintf("Incoming game proposal: Player %v, stake = %v. Accept? (y/n) ", proposer, ourStake)
 		answer, err := h.io.Prompt(msg)
 		if err != nil {
 			return nil, fmt.Errorf("prompting user input")
@@ -82,16 +82,7 @@ func (h handler) HandleProposal(p pclient.ChannelProposal, r *pclient.ProposalRe
 		h.io.Print(fmt.Sprintf("Error accepting channel proposal: %v\n", err))
 		return
 	}
-
-	// Start the on-chain event watcher.
-	go func() {
-		err := ch.Watch(h)
-		if err != nil {
-			fmt.Printf("Watcher returned with error: %v", err)
-		}
-	}()
-
-	h.game = newGame(ch)
+	h.initGame(ch)
 }
 
 // HandleUpdate is the callback for incoming channel updates.
