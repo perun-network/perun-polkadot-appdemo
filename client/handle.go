@@ -16,7 +16,7 @@ type handler struct {
 
 // HandleProposal is the callback for incoming channel proposals.
 func (h handler) HandleProposal(p pclient.ChannelProposal, r *pclient.ProposalResponder) {
-	lcp, err := func() (*pclient.LedgerChannelProposalMsg, error) {
+	_, err := func() (*pclient.LedgerChannelProposalMsg, error) {
 		// Check that we got a ledger channel proposal.
 		lcp, ok := p.(*pclient.LedgerChannelProposalMsg)
 		if !ok {
@@ -56,13 +56,9 @@ func (h handler) HandleProposal(p pclient.ChannelProposal, r *pclient.ProposalRe
 
 		// Propose to user.
 		proposer := lcp.Peers[proposerIdx]
-		msg := fmt.Sprintf("Incoming game proposal: Player %v, stake = %v. Accept? (y/n) ", proposer, ourStake)
-		answer, err := h.io.Prompt(msg)
-		if err != nil {
-			return nil, fmt.Errorf("prompting user input")
-		} else if answer != "y" {
-			return nil, fmt.Errorf("proposal rejected")
-		}
+		msg := fmt.Sprintf("Incoming game proposal: Player %v, stake = %v. Accept? (accept/reject) ", proposer, ourStake)
+		h.io.Print(msg)
+		h.proposals <- Proposal{lcp, r}
 
 		return lcp, nil
 	}()
@@ -71,18 +67,6 @@ func (h handler) HandleProposal(p pclient.ChannelProposal, r *pclient.ProposalRe
 		r.Reject(context.TODO(), err.Error()) //nolint:errcheck // It's OK if rejection fails.
 		return
 	}
-
-	// Create a channel accept message and send it.
-	accept := lcp.Accept(
-		h.acc,                    // The account we use in the channel.
-		client.WithRandomNonce(), // Our share of the channel nonce.
-	)
-	ch, err := r.Accept(context.TODO(), accept)
-	if err != nil {
-		h.io.Print(fmt.Sprintf("Error accepting channel proposal: %v\n", err))
-		return
-	}
-	h.initGame(ch)
 }
 
 // HandleUpdate is the callback for incoming channel updates.

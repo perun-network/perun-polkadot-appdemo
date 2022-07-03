@@ -34,14 +34,8 @@ func Run(init func(io IO) error, commands []Command) error {
 		}
 
 		// Run command loop.
-		for {
-			// Read command.
-			input, err := io.Prompt("> ")
-			if err != nil {
-				errCh <- err
-				return
-			}
-
+		io.out <- Prefix
+		for input := range io.in {
 			if len(input) == 0 {
 				continue
 			}

@@ -2,6 +2,8 @@ package cli
 
 import "bufio"
 
+const Prefix = "> "
+
 type IO struct {
 	in      chan string
 	out     chan string
@@ -46,12 +48,7 @@ func (io IO) Run(reader *bufio.Reader, writer *bufio.Writer) error {
 }
 
 func (io IO) Print(msg string) {
-	io.out <- msg + "\n"
-}
-
-func (io IO) Prompt(msg string) (string, error) {
-	io.out <- msg
-	return <-io.in, nil
+	io.out <- msg + "\n" + Prefix
 }
 
 func (io IO) SetContextValue(key string, value interface{}) {

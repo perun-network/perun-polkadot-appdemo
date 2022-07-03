@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/perun-network/perun-polkadot-appdemo/cli"
 )
@@ -28,7 +29,7 @@ var commands = []cli.Command{
 
 			io.Print(fmt.Sprintf("Added %v with wire address %v and network address %v to known peers.", name, wireAddr, hostAddr))
 		},
-		Help: "addpeer [name:string] [id:addr] [host:string]",
+		Help: "Usage: addpeer [name:string] [id:addr] [host:string]\nAdd client to list of known peers.",
 	},
 	{
 		Name: "propose",
@@ -68,7 +69,54 @@ var commands = []cli.Command{
 				return
 			}
 		},
-		Help: "propose [peer:string] [stake:int]",
+		Help: "Usage: propose [peer:string] [stake:int]\nPropose game to peer.",
+	},
+	{
+		Name: "accept",
+		Func: func(io cli.IO, args []string) {
+			c, err := Context(io).Client()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+			select {
+			case p := <-c.Proposals():
+				io.Print("Accepting proposal and depositing stake...")
+				err = c.AcceptProposal(p)
+				if err != nil {
+					io.Print(err.Error())
+					return
+				}
+				io.Print("Done.")
+			default:
+				io.Print("No incoming proposal.")
+			}
+		},
+		Help: "Accept incoming proposal.",
+	},
+	{
+		Name: "reject",
+		Func: func(io cli.IO, args []string) {
+			c, err := Context(io).Client()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+
+			select {
+			case p := <-c.Proposals():
+				io.Print("Rejecting proposal...")
+				err = c.RejectProposal(p, "rejected")
+				if err != nil {
+					io.Print(err.Error())
+					return
+				}
+				io.Print("Done.")
+			default:
+				io.Print("No incoming proposal.")
+			}
+		},
+		Help: "Reject incoming proposal.",
 	},
 	{
 		Name: "set",
@@ -97,7 +145,7 @@ var commands = []cli.Command{
 			}
 			io.Print("Update accepted.")
 		},
-		Help: "set [row:int] [column:int]",
+		Help: "Usage: set [row:int] [column:int]\nPlace mark.",
 	},
 	{
 		Name: "balance",
@@ -114,6 +162,13 @@ var commands = []cli.Command{
 			}
 			io.Print("Balance: " + bal.String())
 		},
-		Help: "balance\nShow my balance.",
+		Help: "Show my balance.",
+	},
+	{
+		Name: "exit",
+		Func: func(io cli.IO, args []string) {
+			os.Exit(0)
+		},
+		Help: "Exit program.",
 	},
 }

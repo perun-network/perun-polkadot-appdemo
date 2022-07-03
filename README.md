@@ -2,14 +2,11 @@
 
 ## Test
 
-1. Start test node at 127.0.0.1:9944.
+1. Start local Polkadot node with Perun Pallet at 127.0.0.1:9944.
 2. Start client Bob.
 ```sh
 go run . -cfg bob.config.json -sk 0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89
 ```
-3. Add Alice to Bob's peers.
-```sh
-addpeer alice 0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d 127.0.0.1:5750
 ```
 3. Start client Alice in a new terminal.
 ```sh

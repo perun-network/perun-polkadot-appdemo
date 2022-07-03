@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 	"perun.network/go-perun/channel"
 	"perun.network/go-perun/client"
+	pclient "perun.network/go-perun/client"
 	"perun.network/go-perun/wallet"
 	"perun.network/go-perun/watcher/local"
 	wirenet "perun.network/go-perun/wire/net"
@@ -28,6 +29,7 @@ type Client struct {
 	game        *Game
 	dialer      *simple.Dialer
 	api         *dot.API
+	proposals   chan Proposal
 }
 
 func NewClient(
@@ -78,6 +80,7 @@ func NewClient(
 		io:          io,
 		dialer:      dialer,
 		api:         api,
+		proposals:   make(chan Proposal),
 	}
 
 	h := handler{gameClient}
@@ -139,4 +142,31 @@ func (c *Client) initGame(ch *client.Channel) {
 
 	c.game = newGame(ch)
 	c.io.Print("New game started.\n" + c.game.String())
+}
+
+type Proposal struct {
+	p *pclient.LedgerChannelProposalMsg
+	r *pclient.ProposalResponder
+}
+
+func (c *Client) Proposals() chan Proposal {
+	return c.proposals
+}
+
+func (c *Client) AcceptProposal(p Proposal) error {
+	// Create a channel accept message and send it.
+	accept := p.p.Accept(
+		c.acc,                    // The account we use in the channel.
+		client.WithRandomNonce(), // Our share of the channel nonce.
+	)
+	ch, err := p.r.Accept(context.TODO(), accept)
+	if err != nil {
+		return err
+	}
+	c.initGame(ch)
+	return nil
+}
+
+func (c *Client) RejectProposal(p Proposal, reason string) error {
+	return p.r.Reject(context.TODO(), reason)
 }
