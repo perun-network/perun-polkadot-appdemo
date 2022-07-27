@@ -13,16 +13,8 @@ import (
 )
 
 var cfgFlag = flag.String("cfg", "", "Configuration file")
-var skFlag = flag.String("sk", "", "Secret key")
 
 func main() {
-	//TODO remove
-	// rng := rand.New(rand.NewSource(0))
-	// sk, _ := sr25519.NewSKFromRng(rng)
-	// pk := sk.Public().Encode()
-	// println(hex.EncodeToString(pk[:]))
-	// os.Exit(0)
-
 	flag.Parse()
 
 	cfg, err := loadConfig(*cfgFlag)
@@ -41,7 +33,7 @@ func main() {
 		}
 
 		c, err := client.NewClient(
-			*skFlag,
+			cfg.SecretKey,
 			api,
 			cfg.QueryDepth,
 			cfg.Host,
@@ -53,8 +45,15 @@ func main() {
 			return err
 		}
 		io.SetContextValue(ContextKeyClient, c)
-		io.SetContextValue(ContextKeyAddressBook, make(AddressBook))
 		io.SetContextValue(ContextKeyChallengeDuration, cfg.ChallengeDuration)
+
+		// Add Peers.
+		book := make(AddressBook)
+		for _, p := range cfg.Peers {
+			c.RegisterPeer(p.WireAddress, p.IpAddress)
+			book[p.Name] = p.WireAddress
+		}
+		io.SetContextValue(ContextKeyAddressBook, book)
 		return nil
 	}
 	err = cli.Run(init, commands)

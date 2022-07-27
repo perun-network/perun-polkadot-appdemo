@@ -6,6 +6,7 @@
 	"tx_timeout": 30,
 	"app_id": "0xc2b252a1d9c14276e3b728ef92722ba992d05d8a83ba7f2189e87b2dc6305329",
 	"challenge_duration": 10,
+	"secret_key": "0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a",
 	"peers": [
 		{
 			"name": "bob",
