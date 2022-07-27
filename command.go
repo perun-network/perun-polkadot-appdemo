@@ -148,6 +148,32 @@ var commands = []cli.Command{
 		Help: "Usage: set [row:int] [column:int]\nPlace mark.",
 	},
 	{
+		Name: "forceclose",
+		Func: func(io cli.IO, args []string) {
+			// Get game state.
+			c, err := Context(io).Client()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+			g, err := c.Game()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+
+			// Close game.
+			io.Print("Closing game...")
+			err = g.Settle()
+			if err != nil {
+				io.Print("Error closing game: " + err.Error())
+				return
+			}
+			io.Print("Done.")
+		},
+		Help: "Force the game to come to an end (e.g., if the other participant does not respond).",
+	},
+	{
 		Name: "balance",
 		Func: func(io cli.IO, args []string) {
 			c, err := Context(io).Client()

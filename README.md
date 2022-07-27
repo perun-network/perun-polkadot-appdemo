@@ -3,31 +3,54 @@
 ## Test
 
 1. Start local Polkadot node with Perun Pallet at 127.0.0.1:9944.
-2. Start client Bob.
+
 ```sh
-go run . -cfg bob.config.json -sk 0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89
+ docker run --rm -p 9944:9944 ghcr.io/perun-network/polkadot-test-node:0.2.0
 ```
-```
-3. Start client Alice in a new terminal.
+
+2. Start client Alice in one terminal.
 ```sh
 go run . -cfg alice.config.json -sk 0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a
 ```
-4. In Alice's terminal, add Bob to Alice's peers.
+3. Then start client Bob in a second terminal.
 ```sh
+go run . -cfg bob.config.json -sk 0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89
+```
+
+4. In Alice's terminal, add Bob to Alice's peers.
+```
 addpeer bob 0x8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48 127.0.0.1:5751
 ```
 5. Propose game to Bob with stake 10.
-```sh
+```
 propose bob 10
 ```
-6. Place mark at (2, 2).
-```sh
+6. In Bob's terminal, accept the proposal.
+```
+accept
+```
+7. In Alice's terminal, place the first mark, e.g., at `(2, 2)`.
+```
 set 2 2
+```
+8. In Bob's terminal, place second next mark, e.g., at `(1, 1)`.
+```
+set 1 1
+```
+9. Play until game is complete.
+
+### Dispute
+
+If the other client isn't responding, you can force the closure of a game.
+```
+forceclose
 ```
 
 
 ## TODO
 
+- Test force update.
+- Add command to show game state.
 - Add CI with linter.
 - Use Scale codec for encoding.
 - Use interactive CI package (like gobata).
