@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -46,6 +47,14 @@ func main() {
 		}
 		io.SetContextValue(ContextKeyClient, c)
 		io.SetContextValue(ContextKeyChallengeDuration, cfg.ChallengeDuration)
+
+		io.Print(fmt.Sprintf("Account: %v", c.Account()))
+		bal, err := c.Balance()
+		if err != nil {
+			return err
+		}
+		balDot := client.DotFromPlank(bal.Int)
+		io.Print(fmt.Sprintf("Balance: %v DOT", balDot.String()))
 
 		// Add Peers.
 		book := make(AddressBook)

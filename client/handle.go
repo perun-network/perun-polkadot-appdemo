@@ -82,14 +82,16 @@ func (h handler) HandleUpdate(cur *channel.State, next client.ChannelUpdate, r *
 
 // HandleAdjudicatorEvent is the callback for smart contract events.
 func (h handler) HandleAdjudicatorEvent(e channel.AdjudicatorEvent) {
+	var msg string
 	switch e := e.(type) {
 	case *channel.RegisteredEvent:
-		h.io.Print(fmt.Sprintf("Received event: Dispute registered (%x)", e.ID()))
+		msg = "Dispute registered"
 	case *channel.ProgressedEvent:
-		h.io.Print(fmt.Sprintf("Received event: State progressed (%x)", e.ID()))
+		msg = "State progressed"
 	case *channel.ConcludedEvent:
-		h.io.Print(fmt.Sprintf("Received event: Concluded (%x)", e.ID()))
+		msg = "Concluded"
 	default:
-		h.io.Print(fmt.Sprintf("Received event: Unkown type %T (%x)", e, e.ID()))
+		msg = fmt.Sprintf("Unkown type %T", e)
 	}
+	h.io.Print(fmt.Sprintf("Received event: %v (GameID: %x)", msg, e.ID()))
 }

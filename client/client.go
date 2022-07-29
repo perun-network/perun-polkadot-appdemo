@@ -98,6 +98,10 @@ func (c *Client) Game() (*Game, error) {
 	return c.game, nil
 }
 
+func (c *Client) Account() dotwallet.Address {
+	return dotwallet.AsAddr(c.acc)
+}
+
 func (c *Client) Balance() (types.U128, error) {
 	addr := dotwallet.AsAddr(c.acc)
 	info, err := c.api.AccountInfo(addr.AccountID())

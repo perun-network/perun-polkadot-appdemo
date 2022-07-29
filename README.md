@@ -50,8 +50,7 @@ force_quit
 
 ## TODO
 
-- Test force update.
-- Augment balances to make outcome visible.
+- Investigate why event subscription is slow on sender side.
 - Add command to show game state.
 - Add CI with linter.
 - Use interactive CI package (like gobata).
