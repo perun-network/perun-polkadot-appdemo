@@ -8,29 +8,29 @@ import (
 )
 
 var commands = []cli.Command{
-	{
-		Name: "addpeer",
-		Func: func(io cli.IO, args []string) {
-			// Parse arguments.
-			name := args[0]
-			wireAddr, err := parseWireAddress(args[1])
-			if err != nil {
-				io.Print("Error parsing argument 2: " + err.Error())
-				return
-			}
-			hostAddr := args[2]
+	// {
+	// 	Name: "addpeer",
+	// 	Func: func(io cli.IO, args []string) {
+	// 		// Parse arguments.
+	// 		name := args[0]
+	// 		wireAddr, err := parseWireAddress(args[1])
+	// 		if err != nil {
+	// 			io.Print("Error parsing argument 2: " + err.Error())
+	// 			return
+	// 		}
+	// 		hostAddr := args[2]
 
-			// Set peer address.
-			err = Context(io).SetPeerAddress(name, wireAddr, hostAddr)
-			if err != nil {
-				io.Print("Error setting peer address: " + err.Error())
-				return
-			}
+	// 		// Set peer address.
+	// 		err = Context(io).SetPeerAddress(name, wireAddr, hostAddr)
+	// 		if err != nil {
+	// 			io.Print("Error setting peer address: " + err.Error())
+	// 			return
+	// 		}
 
-			io.Print(fmt.Sprintf("Added %v with wire address %v and network address %v to known peers.", name, wireAddr, hostAddr))
-		},
-		Help: "Usage: addpeer [name:string] [id:addr] [host:string]\nAdd client to list of known peers.",
-	},
+	// 		io.Print(fmt.Sprintf("Added %v with wire address %v and network address %v to known peers.", name, wireAddr, hostAddr))
+	// 	},
+	// 	Help: "Usage: addpeer [name:string] [id:addr] [host:string]\nAdd client to list of known peers.",
+	// },
 	{
 		Name: "propose",
 		Func: func(io cli.IO, args []string) {
@@ -119,9 +119,14 @@ var commands = []cli.Command{
 		Help: "Reject incoming proposal.",
 	},
 	{
-		Name: "set",
+		Name: "mark",
 		Func: func(io cli.IO, args []string) {
 			// Parse arguments.
+			expectedLen := 2
+			if len(args) != expectedLen {
+				io.Print(fmt.Sprintf("invalid number of arguments: expected %d, got %d", expectedLen, len(args)))
+				return
+			}
 			row, column := parseInt64(args[0])-1, parseInt64(args[1])-1
 
 			// Get game state.
@@ -145,10 +150,44 @@ var commands = []cli.Command{
 			}
 			io.Print("Update accepted.")
 		},
-		Help: "Usage: set [row:int] [column:int]\nPlace mark.",
+		Help: "Usage: mark [row:int] [column:int]\nPlace mark.",
 	},
 	{
-		Name: "forceclose",
+		Name: "force_mark",
+		Func: func(io cli.IO, args []string) {
+			// Parse arguments.
+			expectedLen := 2
+			if len(args) != expectedLen {
+				io.Print(fmt.Sprintf("invalid number of arguments: expected %d, got %d", expectedLen, len(args)))
+				return
+			}
+			row, column := parseInt64(args[0])-1, parseInt64(args[1])-1
+
+			// Get game state.
+			c, err := Context(io).Client()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+			g, err := c.Game()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+
+			// Perform game action.
+			io.Print(fmt.Sprintf("Forcing state update: place mark at (%v, %v)", row, column))
+			err = g.ForceSet(int(row), int(column))
+			if err != nil {
+				io.Print("Error performing game action: " + err.Error())
+				return
+			}
+			io.Print("Done.")
+		},
+		Help: "Usage: force_mark [row:int] [column:int]\nEncforce action on-chain.",
+	},
+	{
+		Name: "force_quit",
 		Func: func(io cli.IO, args []string) {
 			// Get game state.
 			c, err := Context(io).Client()

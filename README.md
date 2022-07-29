@@ -28,30 +28,31 @@ accept
 ```
 6. In Alice's terminal, place the first mark, e.g., at `(2, 2)`.
 ```
-set 2 2
+mark 2 2
 ```
 7. In Bob's terminal, place second next mark, e.g., at `(1, 1)`.
 ```
-set 1 1
+mark 1 1
 ```
 8. Play until game is complete.
 
 ### Dispute
 
-If the other client isn't responding, you can force the closure of a game.
+If the other client isn't responding, you can enforce an action on-chain.
 ```
-forceclose
+force_mark 3 3
+```
+Alternatively, you can force quit a game.
+```
+force_quit
 ```
 
 
 ## TODO
 
 - Test force update.
+- Augment balances to make outcome visible.
 - Add command to show game state.
 - Add CI with linter.
-- Use Scale codec for encoding.
 - Use interactive CI package (like gobata).
 - Handle game and update in package main, not in package client. Communicate via channels in handler.
-- Use host address as wire address.
-- Handle player not responding.
-- Add peers to config.

@@ -27,6 +27,17 @@ func Run(init func(io IO) error, commands []Command) error {
 			return
 		}
 
+		// Add help command.
+		helpCommand := Command{
+			Name: "help",
+			Func: func(io IO, args []string) {
+				help := buildHelp(commands)
+				io.Print(help)
+			},
+			Help: "Show list of available commands.",
+		}
+		commands := append(commands, helpCommand)
+
 		// Build command map.
 		commandMap := make(map[string]int)
 		for i, c := range commands {
@@ -48,8 +59,7 @@ func Run(init func(io IO) error, commands []Command) error {
 			// Get command.
 			cmdIndex, ok := commandMap[name]
 			if !ok {
-				help := buildHelp(commands)
-				msg := fmt.Sprintf("Invalid command: %v\n\nList of valid commands:\n\n%v", name, help)
+				msg := fmt.Sprintf("Invalid command: %v\nEnter '%v' to show a list of valid commands.", name, helpCommand.Name)
 				io.Print(msg)
 				continue
 			}

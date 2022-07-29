@@ -48,7 +48,7 @@ func (io IO) Run(reader *bufio.Reader, writer *bufio.Writer) error {
 }
 
 func (io IO) Print(msg string) {
-	io.out <- msg + "\n" + Prefix
+	io.out <- "\r" + msg + "\n" + Prefix
 }
 
 func (io IO) SetContextValue(key string, value interface{}) {
