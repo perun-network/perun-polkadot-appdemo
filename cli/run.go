@@ -28,20 +28,32 @@ func Run(init func(io IO) error, commands []Command) error {
 		}
 
 		// Add help command.
+		commandMap := make(map[string]Command)
+		helpName := "help"
 		helpCommand := Command{
-			Name: "help",
+			Name: helpName,
 			Func: func(io IO, args []string) {
-				help := buildHelp(commands)
-				io.Print(help)
+				if len(args) == 1 {
+					name := args[0]
+					cmd, ok := commandMap[name]
+					if ok {
+						help := buildHelpForCommand(cmd)
+						io.Print(help)
+					} else {
+						io.Print(fmt.Sprintf("Unknown command '%v'.\nEnter '%v' to see a list of valid commands.", name, helpName))
+					}
+				} else {
+					help := buildHelp(commands)
+					io.Print(help)
+				}
 			},
 			Help: "Show list of available commands.",
 		}
-		commands := append(commands, helpCommand)
+		commands = append(commands, helpCommand)
 
 		// Build command map.
-		commandMap := make(map[string]int)
-		for i, c := range commands {
-			commandMap[c.Name] = i
+		for _, c := range commands {
+			commandMap[c.Name] = c
 		}
 
 		// Run command loop.
@@ -57,7 +69,7 @@ func Run(init func(io IO) error, commands []Command) error {
 			args := tokens[1:]
 
 			// Get command.
-			cmdIndex, ok := commandMap[name]
+			cmd, ok := commandMap[name]
 			if !ok {
 				msg := fmt.Sprintf("Invalid command: %v\nEnter '%v' to show a list of valid commands.", name, helpCommand.Name)
 				io.Print(msg)
@@ -65,7 +77,7 @@ func Run(init func(io IO) error, commands []Command) error {
 			}
 
 			// Execute command.
-			commands[cmdIndex].Func(io, args)
+			cmd.Func(io, args)
 		}
 	}()
 
