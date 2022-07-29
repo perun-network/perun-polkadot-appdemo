@@ -120,12 +120,13 @@ func (c *Client) initGame(ch *client.Channel) {
 	// Handle updates.
 	ch.OnUpdate(func(from, to *channel.State) {
 		data := to.Data.(*app.TicTacToeAppData)
-		c.io.Print("New game state:\n" + data.String())
+		balances := dotsFromPlanks(to.Balances[assetIdx])
+		c.io.Print(fmt.Sprintf("***\nUpdated game state:\n%v\nBalances: %v", data.String(), balances))
 
 		// If final, settle.
 		if final, winner := data.CheckFinal(); final {
-			c.io.Print("Game over.")
 			if c.game.ch.Idx() == *winner {
+				c.io.Print("You won.")
 				c.io.Print("Initiating payout...")
 				go func() {
 					err := ch.Settle(context.TODO(), false)
@@ -136,12 +137,26 @@ func (c *Client) initGame(ch *client.Channel) {
 					c.io.Print("Payout done.")
 					ch.Close()
 				}()
+			} else {
+				c.io.Print("Game over. You lost.")
+			}
+		} else {
+			if c.game.ch.Idx() == channel.Index(data.NextActor) {
+				c.io.Print("Your turn.")
+			} else {
+				c.io.Print("Waiting for other player.")
 			}
 		}
 	})
 
 	c.game = newGame(ch)
 	c.io.Print("New game started.\n" + c.game.String())
+	data := ch.State().Data.(*app.TicTacToeAppData)
+	if c.game.ch.Idx() == channel.Index(data.NextActor) {
+		c.io.Print("Your turn.")
+	} else {
+		c.io.Print("Waiting for other player.")
+	}
 }
 
 type Proposal struct {

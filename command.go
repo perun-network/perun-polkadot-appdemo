@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/perun-network/perun-polkadot-appdemo/cli"
+	"github.com/perun-network/perun-polkadot-appdemo/client"
 )
 
 var commands = []cli.Command{
@@ -39,7 +40,13 @@ var commands = []cli.Command{
 				io.Print("Invalid number of arguments.")
 				return
 			}
-			peer, stake := args[0], parseBigInt(args[1])
+			peer := args[0]
+			stake, err := parseBigFloat(args[1])
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+			stakePlank := client.PlankFromDot(stake)
 
 			challengeDuration, err := Context(io).ChallengeDuration()
 			if err != nil {
@@ -63,7 +70,7 @@ var commands = []cli.Command{
 
 			// Propose game.
 			io.Print(fmt.Sprintf("Proposing game to %v (%v)...", peer, peerAddr))
-			_, err = c.ProposeGame(peerAddr, stake, uint64(challengeDuration))
+			_, err = c.ProposeGame(peerAddr, stakePlank, uint64(challengeDuration))
 			if err != nil {
 				io.Print("Error: " + err.Error())
 				return
@@ -87,7 +94,6 @@ var commands = []cli.Command{
 					io.Print(err.Error())
 					return
 				}
-				io.Print("Done.")
 			default:
 				io.Print("No incoming proposal.")
 			}
@@ -148,7 +154,6 @@ var commands = []cli.Command{
 				io.Print("Error performing game action: " + err.Error())
 				return
 			}
-			io.Print("Update accepted.")
 		},
 		Help: "Usage: mark [row:int] [column:int]\nPlace mark.",
 	},
@@ -225,7 +230,8 @@ var commands = []cli.Command{
 				io.Print(err.Error())
 				return
 			}
-			io.Print("Balance: " + bal.String())
+			dot := client.DotFromPlank(bal.Int)
+			io.Print("Balance: " + dot.String() + " DOT")
 		},
 		Help: "Show my balance.",
 	},

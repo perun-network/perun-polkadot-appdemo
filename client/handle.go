@@ -49,14 +49,15 @@ func (h handler) HandleProposal(p pclient.ChannelProposal, r *pclient.ProposalRe
 		// Check that the stakes are the same for all participants.
 		const assetIdx, proposerIdx, ourIdx = 0, 0, 1
 		proposerStake := lcp.FundingAgreement[assetIdx][proposerIdx]
-		ourStake := lcp.FundingAgreement[assetIdx][ourIdx]
-		if proposerStake.Cmp(ourStake) != 0 {
+		stake := lcp.FundingAgreement[assetIdx][ourIdx]
+		if proposerStake.Cmp(stake) != 0 {
 			return nil, fmt.Errorf("unequal stake")
 		}
 
 		// Propose to user.
 		proposer := lcp.Peers[proposerIdx]
-		msg := fmt.Sprintf("Incoming game proposal: Player %v, stake = %v.\nAccept? (accept/reject)", proposer, ourStake)
+		stakeDot := DotFromPlank(stake)
+		msg := fmt.Sprintf("Incoming game proposal: Player %v, stake = %v DOT.\nAccept? (accept/reject)", proposer, stakeDot)
 		h.io.Print(msg)
 		h.proposals <- Proposal{lcp, r}
 
@@ -81,5 +82,14 @@ func (h handler) HandleUpdate(cur *channel.State, next client.ChannelUpdate, r *
 
 // HandleAdjudicatorEvent is the callback for smart contract events.
 func (h handler) HandleAdjudicatorEvent(e channel.AdjudicatorEvent) {
-	h.io.Print(fmt.Sprintf("Received adjudicator event: %T", e))
+	switch e := e.(type) {
+	case *channel.RegisteredEvent:
+		h.io.Print(fmt.Sprintf("Received event: Dispute registered (%x)", e.ID()))
+	case *channel.ProgressedEvent:
+		h.io.Print(fmt.Sprintf("Received event: State progressed (%x)", e.ID()))
+	case *channel.ConcludedEvent:
+		h.io.Print(fmt.Sprintf("Received event: Concluded (%x)", e.ID()))
+	default:
+		h.io.Print(fmt.Sprintf("Received event: Unkown type %T (%x)", e, e.ID()))
+	}
 }

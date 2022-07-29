@@ -10,6 +10,8 @@ import (
 	"perun.network/go-perun/client"
 )
 
+const assetIdx = 0
+
 type Game struct {
 	ch *client.Channel
 }
@@ -46,7 +48,6 @@ func (g *Game) set(row, col int, state *channel.State) {
 			panic(fmt.Sprintf("expected 1 asset, got %v", len(sum)))
 		}
 
-		assetIdx := 0
 		balances := state.Balances[assetIdx]
 		for i, bal := range balances {
 			if i == int(*winner) {
@@ -75,5 +76,6 @@ func (g *Game) String() string {
 	if !ok {
 		panic(fmt.Sprintf("invalid data type: %T", data))
 	}
-	return data.String()
+	balances := dotsFromPlanks(g.ch.State().Balances[assetIdx])
+	return fmt.Sprintf("Game ID: %x\nGame state:\n%v\nBalances: %v", g.ch.ID(), data.String(), balances)
 }

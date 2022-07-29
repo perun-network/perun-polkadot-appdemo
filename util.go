@@ -10,12 +10,20 @@ import (
 	"perun.network/go-perun/wire"
 )
 
-func parseBigInt(s string) *big.Int {
-	i, ok := new(big.Int).SetString(s, 10)
+// func parseBigInt(s string) *big.Int {
+// 	i, ok := new(big.Int).SetString(s, 10)
+// 	if !ok {
+// 		panic(fmt.Sprintf("error parsing big.Int: %v", s))
+// 	}
+// 	return i
+// }
+
+func parseBigFloat(s string) (*big.Float, error) {
+	v, ok := new(big.Float).SetString(s)
 	if !ok {
-		panic(fmt.Sprintf("error parsing big.Int: %v", s))
+		return nil, fmt.Errorf("error parsing big.Float: %v", s)
 	}
-	return i
+	return v, nil
 }
 
 func parseInt64(s string) int64 {
