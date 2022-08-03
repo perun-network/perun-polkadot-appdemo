@@ -76,7 +76,7 @@ var commands = []cli.Command{
 				return
 			}
 		},
-		Help: "Usage: propose [peer:string] [stake:int]\nPropose game to peer.",
+		Help: "Usage: propose [peer:string] [stake:float]\nPropose game to peer with stake in DOT.",
 	},
 	{
 		Name: "accept",

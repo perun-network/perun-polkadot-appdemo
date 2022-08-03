@@ -46,7 +46,7 @@ func Run(init func(io IO) error, commands []Command) error {
 					io.Print(help)
 				}
 			},
-			Help: "Show list of available commands.",
+			Help: "Usage: help [cmd:str]\nIf 'cmd' is provided, show the help for that command. Otherwise, list all commands.",
 		}
 		commands = append(commands, helpCommand)
 
