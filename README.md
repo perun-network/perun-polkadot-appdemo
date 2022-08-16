@@ -50,7 +50,6 @@ force_quit
 
 ## TODO
 
-- Show game state update on force execution.
 - Investigate why event subscription is slow on sender side.
 - Add command to show game state.
 - Add CI with linter.

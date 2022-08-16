@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/perun-network/perun-polkadot-appdemo/app"
 	dotchannel "github.com/perun-network/perun-polkadot-backend/channel"
 	"perun.network/go-perun/channel"
 	"perun.network/go-perun/client"
@@ -82,16 +83,25 @@ func (h handler) HandleUpdate(cur *channel.State, next client.ChannelUpdate, r *
 
 // HandleAdjudicatorEvent is the callback for smart contract events.
 func (h handler) HandleAdjudicatorEvent(e channel.AdjudicatorEvent) {
-	var msg string
+	p := func(msg string) {
+		h.io.Print(fmt.Sprintf("Received event: %v (GameID: %x)", msg, e.ID()))
+	}
 	switch e := e.(type) {
 	case *channel.RegisteredEvent:
-		msg = "Dispute registered"
+		p("Dispute registered")
 	case *channel.ProgressedEvent:
-		msg = "State progressed"
+		p("State progressed")
+		d, ok := e.State.Data.(*app.TicTacToeAppData)
+		if !ok {
+			h.io.Print(fmt.Sprintf("Error reading app state: wrong type: expected *TicTacToeAppData, got %T", e.State.Data))
+			break
+		}
+		h.io.Print(fmt.Sprintf("New game state:\n%v", d))
 	case *channel.ConcludedEvent:
-		msg = "Concluded"
+		p("Concluded")
 	default:
-		msg = fmt.Sprintf("Unkown type %T", e)
+		msg := fmt.Sprintf("Unkown type %T", e)
+		p(msg)
 	}
-	h.io.Print(fmt.Sprintf("Received event: %v (GameID: %x)", msg, e.ID()))
+
 }
