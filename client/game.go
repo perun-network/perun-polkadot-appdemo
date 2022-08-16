@@ -22,24 +22,42 @@ func newGame(ch *client.Channel) *Game {
 
 // Set sends a game move to the channel peer.
 func (g *Game) Set(row, col int) error {
-	return g.ch.Update(context.TODO(), func(state *channel.State) {
-		g.set(row, col, state)
-	})
+	return g.applyAction(g.ch.Update, row, col)
 }
 
 // ForceSet registers a game move on-chain.
-func (g *Game) ForceSet(x, y int) error {
-	return g.ch.ForceUpdate(context.TODO(), func(state *channel.State) {
-		g.set(x, y, state)
+func (g *Game) ForceSet(row, col int) error {
+	return g.applyAction(g.ch.ForceUpdate, row, col)
+}
+
+type updaterFn = func(ctx context.Context, updater func(*channel.State)) error
+
+func (g *Game) applyAction(uf updaterFn, row, col int) error {
+	// Dry run.
+	err := g.set(row, col, g.ch.State().Clone())
+	if err != nil {
+		return fmt.Errorf("invalid move: %w", err)
+	}
+
+	return uf(context.TODO(), func(state *channel.State) {
+		err := g.set(row, col, state)
+		if err != nil {
+			panic(err)
+		}
 	})
 }
 
-func (g *Game) set(row, col int, state *channel.State) {
+func (g *Game) set(row, col int, state *channel.State) error {
 	data, ok := state.Data.(*app.TicTacToeAppData)
 	if !ok {
 		panic(fmt.Sprintf("invalid data type: %T", data))
 	}
-	data.Set(row, col, g.ch.Idx())
+
+	err := data.Set(row, col, g.ch.Idx())
+	if err != nil {
+		return err
+	}
+
 	var winner *channel.Index
 	state.IsFinal, winner = data.CheckFinal()
 	if state.IsFinal {
@@ -57,6 +75,7 @@ func (g *Game) set(row, col int, state *channel.State) {
 			}
 		}
 	}
+	return nil
 }
 
 // Settle settles the app channel and withdraws the funds.

@@ -136,7 +136,10 @@ func (a *TicTacToeApp) Set(s *channel.State, x, y int, actorIdx channel.Index) e
 		return fmt.Errorf("invalid data type: %T", d)
 	}
 
-	d.Set(x, y, actorIdx)
+	err := d.Set(x, y, actorIdx)
+	if err != nil {
+		return err
+	}
 
 	if isFinal, winner := d.CheckFinal(); isFinal {
 		s.IsFinal = true

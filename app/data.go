@@ -73,13 +73,14 @@ func (d *TicTacToeAppData) Clone() channel.Data {
 	return &_d
 }
 
-func (d *TicTacToeAppData) Set(row, col int, actorIdx channel.Index) {
+func (d *TicTacToeAppData) Set(row, col int, actorIdx channel.Index) error {
 	if d.NextActor != uint8safe(uint16(actorIdx)) {
-		panic("invalid actor")
+		return fmt.Errorf("invalid actor")
 	}
 	v := makeFieldValueFromPlayerIdx(actorIdx)
 	d.Grid[row*3+col] = v
 	d.NextActor = calcNextActor(d.NextActor)
+	return nil
 }
 
 func calcNextActor(actor uint8) uint8 {
