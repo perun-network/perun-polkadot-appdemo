@@ -3,7 +3,6 @@ package client
 import (
 	"fmt"
 
-	"github.com/perun-network/perun-polkadot-appdemo/app"
 	dotchannel "github.com/perun-network/perun-polkadot-backend/channel"
 	"perun.network/go-perun/channel"
 	"perun.network/go-perun/client"
@@ -94,12 +93,8 @@ func (h handler) HandleAdjudicatorEvent(e channel.AdjudicatorEvent) {
 		p("Dispute registered")
 	case *channel.ProgressedEvent:
 		p("State progressed")
-		d, ok := e.State.Data.(*app.TicTacToeAppData)
-		if !ok {
-			h.io.PrintWithPrefix(fmt.Sprintf("Error reading app state: wrong type: expected *TicTacToeAppData, got %T", e.State.Data))
-			break
-		}
-		h.io.PrintWithPrefix(fmt.Sprintf("New game state:\n%v", d))
+		h.printGameState(e.State)
+		h.io.PrintPrefix()
 	case *channel.ConcludedEvent:
 		p("Concluded")
 	default:

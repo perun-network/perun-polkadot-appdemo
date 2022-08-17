@@ -129,45 +129,32 @@ func (c *Client) initGame(ch *client.Channel) {
 
 	// Handle updates.
 	ch.OnUpdate(func(from, to *channel.State) {
-		data := to.Data.(*app.TicTacToeAppData)
-		balances := dotsFromPlancks(to.Balances[assetIdx])
-		c.io.Print(fmt.Sprintf("Updated game state:\n%v\nBalances: %v", data.String(), balances))
-
-		// If final, settle.
-		if final, winner := data.CheckFinal(); final {
-			if c.game.ch.Idx() == *winner {
-				c.io.Print("You won.")
-				c.io.Print("Initiating payout...")
-				go func() {
-					ctx, cancel := c.NewTransactionContext()
-					defer cancel()
-					err := ch.Settle(ctx, false)
-					if err != nil {
-						c.io.Print(err.Error())
-						return
-					}
-					c.io.Print("Payout done.")
-					ch.Close()
-				}()
-			} else {
-				c.io.Print("Game over. You lost.")
-			}
-		} else {
-			if c.game.ch.Idx() == channel.Index(data.NextActor) {
-				c.io.PrintWithPrefix("Your turn.")
-			} else {
-				c.io.PrintWithPrefix("Waiting for other player.")
-			}
-		}
+		c.printGameState(to)
 	})
 
 	c.game = newGame(ch)
-	c.io.Print("New game started.\n" + c.game.String())
-	data := ch.State().Data.(*app.TicTacToeAppData)
-	if c.game.ch.Idx() == channel.Index(data.NextActor) {
-		c.io.PrintWithPrefix("Your turn.")
+	c.io.Print("New game started.")
+	c.printGameState(ch.State())
+}
+
+func (c *Client) printGameState(state *channel.State) {
+	data := state.Data.(*app.TicTacToeAppData)
+	balances := dotsFromPlancks(state.Balances[assetIdx])
+	c.io.Print(fmt.Sprintf("Game state:\n%v\nBalances: %v", data.String(), balances))
+
+	// Print next actor info.
+	if final, winner := data.CheckFinal(); final {
+		if c.game.ch.Idx() == *winner {
+			c.io.Print("You won.")
+		} else {
+			c.io.Print("Game over. You lost.")
+		}
 	} else {
-		c.io.PrintWithPrefix("Waiting for other player.")
+		if c.game.ch.Idx() == channel.Index(data.NextActor) {
+			c.io.PrintWithPrefix("Your turn.")
+		} else {
+			c.io.PrintWithPrefix("Waiting for other player.")
+		}
 	}
 }
 
