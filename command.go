@@ -46,8 +46,10 @@ var commands = []cli.Command{
 			}
 
 			// Propose game.
+			ctx, cancel := c.NewTransactionContext()
+			defer cancel()
 			io.Print(fmt.Sprintf("Proposing game to %v (%v)...", peer, peerAddr))
-			_, err = c.ProposeGame(peerAddr, stakePlanck, uint64(challengeDuration))
+			_, err = c.ProposeGame(ctx, peerAddr, stakePlanck, uint64(challengeDuration))
 			if err != nil {
 				io.Print("Error: " + err.Error())
 				return
@@ -66,7 +68,9 @@ var commands = []cli.Command{
 			select {
 			case p := <-c.Proposals():
 				io.Print("Accepting proposal and depositing stake...")
-				err = c.AcceptProposal(p)
+				ctx, cancel := c.NewTransactionContext()
+				defer cancel()
+				err = c.AcceptProposal(ctx, p)
 				if err != nil {
 					io.Print(err.Error())
 					return
@@ -89,7 +93,9 @@ var commands = []cli.Command{
 			select {
 			case p := <-c.Proposals():
 				io.Print("Rejecting proposal...")
-				err = c.RejectProposal(p, "rejected")
+				ctx, cancel := c.NewTransactionContext()
+				defer cancel()
+				err = c.RejectProposal(ctx, p, "rejected")
 				if err != nil {
 					io.Print(err.Error())
 					return
@@ -126,7 +132,9 @@ var commands = []cli.Command{
 
 			// Perform game action.
 			io.Print(fmt.Sprintf("Proposing state update: place mark at (%v, %v)", row, column))
-			err = g.Set(int(row)-1, int(column)-1)
+			ctx, cancel := c.NewTransactionContext()
+			defer cancel()
+			err = g.Set(ctx, int(row)-1, int(column)-1)
 			if err != nil {
 				io.Print("Error performing game action: " + err.Error())
 				return
@@ -159,7 +167,9 @@ var commands = []cli.Command{
 
 			// Perform game action.
 			io.Print(fmt.Sprintf("Forcing state update: place mark at (%v, %v)", row, column))
-			err = g.ForceSet(int(row)-1, int(column)-1)
+			ctx, cancel := c.NewTransactionContext()
+			defer cancel()
+			err = g.ForceSet(ctx, int(row)-1, int(column)-1)
 			if err != nil {
 				io.Print("Error performing game action: " + err.Error())
 				return
@@ -185,7 +195,9 @@ var commands = []cli.Command{
 
 			// Close game.
 			io.Print("Closing game...")
-			err = g.Settle()
+			ctx, cancel := c.NewTransactionContext()
+			defer cancel()
+			err = g.Settle(ctx)
 			if err != nil {
 				io.Print("Error closing game: " + err.Error())
 				return

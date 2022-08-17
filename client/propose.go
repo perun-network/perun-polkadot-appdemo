@@ -9,7 +9,7 @@ import (
 	"perun.network/go-perun/wire"
 )
 
-func (c *Client) ProposeGame(peer wire.Address, stake channel.Bal, challengeDuration uint64) (*Game, error) {
+func (c *Client) ProposeGame(ctx context.Context, peer wire.Address, stake channel.Bal, challengeDuration uint64) (*Game, error) {
 	participants := []wire.Address{c.wireAddr, peer}
 
 	// We create an initial allocation which defines the starting balances.
@@ -37,7 +37,7 @@ func (c *Client) ProposeGame(peer wire.Address, stake channel.Bal, challengeDura
 	}
 
 	// Send the app channel proposal.
-	ch, err := c.perunClient.ProposeChannel(context.TODO(), proposal)
+	ch, err := c.perunClient.ProposeChannel(ctx, proposal)
 	if err != nil {
 		return nil, err
 	}

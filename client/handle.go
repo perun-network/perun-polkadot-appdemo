@@ -1,7 +1,6 @@
 package client
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/perun-network/perun-polkadot-appdemo/app"
@@ -66,7 +65,9 @@ func (h handler) HandleProposal(p pclient.ChannelProposal, r *pclient.ProposalRe
 	}()
 	if err != nil {
 		h.io.Print(fmt.Sprintf("Rejecting channel proposal: %v\n", err))
-		r.Reject(context.TODO(), err.Error()) //nolint:errcheck // It's OK if rejection fails.
+		ctx, cancel := h.NewTransactionContext()
+		defer cancel()
+		r.Reject(ctx, err.Error()) //nolint:errcheck // It's OK if rejection fails.
 		return
 	}
 }
@@ -75,7 +76,9 @@ func (h handler) HandleProposal(p pclient.ChannelProposal, r *pclient.ProposalRe
 func (h handler) HandleUpdate(cur *channel.State, next client.ChannelUpdate, r *client.UpdateResponder) {
 	// Perun automatically checks that the transition is valid.
 	// We always accept.
-	err := r.Accept(context.TODO())
+	ctx, cancel := h.NewTransactionContext()
+	defer cancel()
+	err := r.Accept(ctx)
 	if err != nil {
 		panic(err)
 	}

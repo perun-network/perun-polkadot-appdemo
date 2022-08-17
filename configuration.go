@@ -17,7 +17,7 @@ type ConfigurationJSON struct {
 	NodeURL           string     `json:"node_url"`
 	NetworkID         uint8      `json:"network_id"`
 	QueryDepth        uint32     `json:"query_depth"`
-	DialTimeout       uint32     `json:"tx_timeout"`
+	TxTimeout         uint32     `json:"tx_timeout"`
 	App               string     `json:"app_id"`
 	ChallengeDuration uint64     `json:"challenge_duration"`
 	SecretKey         string     `json:"secret_key"`
@@ -36,7 +36,7 @@ type Configuration struct {
 	NodeURL           string
 	NetworkID         dot.NetworkID
 	QueryDepth        types.BlockNumber
-	DialTimeout       time.Duration
+	TxTimeout         time.Duration
 	App               AppID
 	ChallengeDuration uint64
 	SecretKey         string
@@ -82,7 +82,7 @@ func loadConfig(fn string) (Configuration, error) {
 		NodeURL:           cfg.NodeURL,
 		NetworkID:         dot.NetworkID(cfg.NetworkID),
 		QueryDepth:        types.BlockNumber(cfg.QueryDepth),
-		DialTimeout:       time.Duration(cfg.DialTimeout) * time.Second,
+		TxTimeout:         time.Duration(cfg.TxTimeout) * time.Second,
 		App:               appAddr,
 		ChallengeDuration: cfg.ChallengeDuration,
 		SecretKey:         cfg.SecretKey,

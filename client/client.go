@@ -32,6 +32,7 @@ type Client struct {
 	dialer      *simple.Dialer
 	api         *dot.API
 	proposals   chan Proposal
+	txTimeout   time.Duration
 }
 
 func NewClient(
@@ -40,6 +41,7 @@ func NewClient(
 	queryDepth types.BlockNumber,
 	host string,
 	wireAccount wire.Account,
+	txTimeout time.Duration,
 	app *app.TicTacToeApp,
 	io cli.IO,
 ) (*Client, error) {
@@ -56,7 +58,7 @@ func NewClient(
 	}
 
 	// Setup network.
-	dialer := simple.NewTCPDialer(dialTimeout)
+	dialer := simple.NewTCPDialer(txTimeout)
 	bus := wirenet.NewBus(wireAccount, dialer, serializer.Serializer())
 	listener, err := simple.NewTCPListener(host)
 	if err != nil {
@@ -84,6 +86,7 @@ func NewClient(
 		dialer:      dialer,
 		api:         api,
 		proposals:   make(chan Proposal),
+		txTimeout:   txTimeout,
 	}
 
 	h := handler{gameClient}
@@ -128,7 +131,7 @@ func (c *Client) initGame(ch *client.Channel) {
 	ch.OnUpdate(func(from, to *channel.State) {
 		data := to.Data.(*app.TicTacToeAppData)
 		balances := dotsFromPlancks(to.Balances[assetIdx])
-		c.io.Print(fmt.Sprintf("***\nUpdated game state:\n%v\nBalances: %v", data.String(), balances))
+		c.io.Print(fmt.Sprintf("Updated game state:\n%v\nBalances: %v", data.String(), balances))
 
 		// If final, settle.
 		if final, winner := data.CheckFinal(); final {
@@ -136,7 +139,9 @@ func (c *Client) initGame(ch *client.Channel) {
 				c.io.Print("You won.")
 				c.io.Print("Initiating payout...")
 				go func() {
-					err := ch.Settle(context.TODO(), false)
+					ctx, cancel := c.NewTransactionContext()
+					defer cancel()
+					err := ch.Settle(ctx, false)
 					if err != nil {
 						c.io.Print(err.Error())
 						return
@@ -175,13 +180,13 @@ func (c *Client) Proposals() chan Proposal {
 	return c.proposals
 }
 
-func (c *Client) AcceptProposal(p Proposal) error {
+func (c *Client) AcceptProposal(ctx context.Context, p Proposal) error {
 	// Create a channel accept message and send it.
 	accept := p.p.Accept(
 		c.acc,                    // The account we use in the channel.
 		client.WithRandomNonce(), // Our share of the channel nonce.
 	)
-	ch, err := p.r.Accept(context.TODO(), accept)
+	ch, err := p.r.Accept(ctx, accept)
 	if err != nil {
 		return err
 	}
@@ -189,6 +194,10 @@ func (c *Client) AcceptProposal(p Proposal) error {
 	return nil
 }
 
-func (c *Client) RejectProposal(p Proposal, reason string) error {
-	return p.r.Reject(context.TODO(), reason)
+func (c *Client) RejectProposal(ctx context.Context, p Proposal, reason string) error {
+	return p.r.Reject(ctx, reason)
+}
+
+func (c *Client) NewTransactionContext() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), c.txTimeout)
 }

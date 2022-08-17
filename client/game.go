@@ -21,25 +21,25 @@ func newGame(ch *client.Channel) *Game {
 }
 
 // Set sends a game move to the channel peer.
-func (g *Game) Set(row, col int) error {
-	return g.applyAction(g.ch.Update, row, col)
+func (g *Game) Set(ctx context.Context, row, col int) error {
+	return g.applyAction(ctx, g.ch.Update, row, col)
 }
 
 // ForceSet registers a game move on-chain.
-func (g *Game) ForceSet(row, col int) error {
-	return g.applyAction(g.ch.ForceUpdate, row, col)
+func (g *Game) ForceSet(ctx context.Context, row, col int) error {
+	return g.applyAction(ctx, g.ch.ForceUpdate, row, col)
 }
 
 type updaterFn = func(ctx context.Context, updater func(*channel.State)) error
 
-func (g *Game) applyAction(uf updaterFn, row, col int) error {
+func (g *Game) applyAction(ctx context.Context, uf updaterFn, row, col int) error {
 	// Dry run.
 	err := g.set(row, col, g.ch.State().Clone())
 	if err != nil {
 		return fmt.Errorf("invalid move: %w", err)
 	}
 
-	return uf(context.TODO(), func(state *channel.State) {
+	return uf(ctx, func(state *channel.State) {
 		err := g.set(row, col, state)
 		if err != nil {
 			panic(err)
@@ -79,8 +79,8 @@ func (g *Game) set(row, col int, state *channel.State) error {
 }
 
 // Settle settles the app channel and withdraws the funds.
-func (g *Game) Settle() error {
-	err := g.ch.Settle(context.TODO(), false)
+func (g *Game) Settle(ctx context.Context) error {
+	err := g.ch.Settle(ctx, false)
 	if err != nil {
 		return err
 	}

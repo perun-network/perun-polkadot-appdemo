@@ -39,6 +39,7 @@ func main() {
 			cfg.QueryDepth,
 			cfg.Host,
 			cfg.WireAccount,
+			cfg.TxTimeout,
 			app,
 			io,
 		)
