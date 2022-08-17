@@ -16,6 +16,7 @@ import (
 	pclient "perun.network/go-perun/client"
 	"perun.network/go-perun/wallet"
 	"perun.network/go-perun/watcher/local"
+	"perun.network/go-perun/wire"
 	wirenet "perun.network/go-perun/wire/net"
 	"perun.network/go-perun/wire/net/simple"
 	"perun.network/go-perun/wire/perunio/serializer"
@@ -24,6 +25,7 @@ import (
 type Client struct {
 	perunClient *client.Client
 	acc         wallet.Address
+	wireAddr    wire.Address
 	app         *app.TicTacToeApp
 	io          cli.IO
 	game        *Game
@@ -37,7 +39,7 @@ func NewClient(
 	api *dot.API,
 	queryDepth types.BlockNumber,
 	host string,
-	dialTimeout time.Duration,
+	wireAccount wire.Account,
 	app *app.TicTacToeApp,
 	io cli.IO,
 ) (*Client, error) {
@@ -55,7 +57,7 @@ func NewClient(
 
 	// Setup network.
 	dialer := simple.NewTCPDialer(dialTimeout)
-	bus := wirenet.NewBus(acc, dialer, serializer.Serializer())
+	bus := wirenet.NewBus(wireAccount, dialer, serializer.Serializer())
 	listener, err := simple.NewTCPListener(host)
 	if err != nil {
 		return nil, errors.WithMessage(err, "could not start tcp listener")
@@ -68,7 +70,7 @@ func NewClient(
 	}
 
 	// Setup Perun client.
-	c, err := client.New(acc.Address(), bus, dot.Funder, dot.Adjudicator, wallet, watcher)
+	c, err := client.New(wireAccount.Address(), bus, dot.Funder, dot.Adjudicator, wallet, watcher)
 	if err != nil {
 		return nil, errors.WithMessage(err, "creating client")
 	}
@@ -76,6 +78,7 @@ func NewClient(
 	gameClient := &Client{
 		perunClient: c,
 		acc:         acc.Address(),
+		wireAddr:    wireAccount.Address(),
 		app:         app,
 		io:          io,
 		dialer:      dialer,

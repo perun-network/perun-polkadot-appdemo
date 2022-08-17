@@ -10,7 +10,7 @@ import (
 )
 
 func (c *Client) ProposeGame(peer wire.Address, stake channel.Bal, challengeDuration uint64) (*Game, error) {
-	participants := []wire.Address{c.acc, peer}
+	participants := []wire.Address{c.wireAddr, peer}
 
 	// We create an initial allocation which defines the starting balances.
 	currency := dotchannel.Asset

@@ -4,9 +4,9 @@ go 1.18
 
 require (
 	github.com/centrifuge/go-substrate-rpc-client/v3 v3.0.2
-	github.com/perun-network/perun-polkadot-backend v0.0.0-20220729133540-91dd3fa9fa49
+	github.com/perun-network/perun-polkadot-backend v0.0.0-20220817194552-1707e566eea3
 	github.com/pkg/errors v0.9.1
-	perun.network/go-perun v0.9.2
+	perun.network/go-perun v0.10.5-0.20220817191840-0e62934c164c
 )
 
 require (

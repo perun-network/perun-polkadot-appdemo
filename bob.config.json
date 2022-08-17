@@ -1,5 +1,5 @@
 {
-	"host": "0.0.0.0:5751",
+	"host": "127.0.0.1:5751",
   "node_url": "ws://127.0.0.1:9944",
 	"network_id": 42,
 	"query_depth": 100,
@@ -10,7 +10,7 @@
 	"peers": [
 		{
 			"name": "alice",
-			"wire_address": "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+			"wire_address": "127.0.0.1:5750",
 			"ip_address": "127.0.0.1:5750"
 		}
 	]

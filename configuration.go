@@ -9,6 +9,7 @@ import (
 	dot "github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	"perun.network/go-perun/wallet"
 	"perun.network/go-perun/wire"
+	"perun.network/go-perun/wire/net/simple"
 )
 
 type ConfigurationJSON struct {
@@ -31,6 +32,7 @@ type PeerJSON struct {
 
 type Configuration struct {
 	Host              string
+	WireAccount       wire.Account
 	NodeURL           string
 	NetworkID         dot.NetworkID
 	QueryDepth        types.BlockNumber
@@ -85,6 +87,7 @@ func loadConfig(fn string) (Configuration, error) {
 		ChallengeDuration: cfg.ChallengeDuration,
 		SecretKey:         cfg.SecretKey,
 		Peers:             peers,
+		WireAccount:       simple.NewAccount(simple.NewAddress(cfg.Host)),
 	}, nil
 }
 

@@ -8,6 +8,7 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/pkg/sr25519"
 	dotwallet "github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
 	"perun.network/go-perun/wire"
+	"perun.network/go-perun/wire/net/simple"
 )
 
 // func parseBigInt(s string) *big.Int {
@@ -35,11 +36,7 @@ func parseInt64(s string) int64 {
 }
 
 func parseWireAddress(hex string) (wire.Address, error) {
-	addr, err := hexToAddress(hex)
-	if err != nil {
-		return nil, err
-	}
-	return addr, nil
+	return simple.NewAddress(hex), nil
 }
 
 func hexToAddress(hex string) (*dotwallet.Address, error) {

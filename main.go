@@ -38,7 +38,7 @@ func main() {
 			api,
 			cfg.QueryDepth,
 			cfg.Host,
-			cfg.DialTimeout,
+			cfg.WireAccount,
 			app,
 			io,
 		)
