@@ -133,7 +133,7 @@ var commands = []cli.Command{
 				io.Print(fmt.Sprintf("invalid number of arguments: expected %d, got %d", expectedLen, len(args)))
 				return
 			}
-			row, column := parseInt64(args[0])-1, parseInt64(args[1])-1
+			row, column := parseInt64(args[0]), parseInt64(args[1])
 
 			// Get game state.
 			c, err := Context(io).Client()
@@ -149,7 +149,7 @@ var commands = []cli.Command{
 
 			// Perform game action.
 			io.Print(fmt.Sprintf("Proposing state update: place mark at (%v, %v)", row, column))
-			err = g.Set(int(row), int(column))
+			err = g.Set(int(row)-1, int(column)-1)
 			if err != nil {
 				io.Print("Error performing game action: " + err.Error())
 				return
@@ -166,7 +166,7 @@ var commands = []cli.Command{
 				io.Print(fmt.Sprintf("invalid number of arguments: expected %d, got %d", expectedLen, len(args)))
 				return
 			}
-			row, column := parseInt64(args[0])-1, parseInt64(args[1])-1
+			row, column := parseInt64(args[0]), parseInt64(args[1])
 
 			// Get game state.
 			c, err := Context(io).Client()
@@ -182,7 +182,7 @@ var commands = []cli.Command{
 
 			// Perform game action.
 			io.Print(fmt.Sprintf("Forcing state update: place mark at (%v, %v)", row, column))
-			err = g.ForceSet(int(row), int(column))
+			err = g.ForceSet(int(row)-1, int(column)-1)
 			if err != nil {
 				io.Print("Error performing game action: " + err.Error())
 				return
