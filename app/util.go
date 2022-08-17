@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"io"
 	"math/big"
 
 	"perun.network/go-perun/channel"
@@ -103,44 +102,6 @@ func uint8safe(a uint16) uint8 {
 	b := uint8(a)
 	if uint16(b) != a {
 		panic("unsafe")
-	}
-	return b
-}
-
-func readUInt8(r io.Reader) (uint8, error) {
-	buf := make([]byte, 1)
-	_, err := io.ReadFull(r, buf)
-	return buf[0], err
-}
-
-func writeUInt8(w io.Writer, v uint8) error {
-	_, err := w.Write([]byte{v})
-	return err
-}
-
-func readUInt8Array(r io.Reader, n int) ([]uint8, error) {
-	buf := make([]byte, n)
-	_, err := io.ReadFull(r, buf)
-	return buf, err
-}
-
-func writeUInt8Array(w io.Writer, v []uint8) error {
-	_, err := w.Write(v)
-	return err
-}
-
-func makeFieldValueArray(a []uint8) []FieldValue {
-	b := make([]FieldValue, len(a))
-	for i := range b {
-		b[i] = FieldValue(a[i])
-	}
-	return b
-}
-
-func makeUInt8Array(a []FieldValue) []uint8 {
-	b := make([]uint8, len(a))
-	for i := range b {
-		b[i] = uint8(a[i])
 	}
 	return b
 }
