@@ -149,9 +149,9 @@ func (c *Client) initGame(ch *client.Channel) {
 			}
 		} else {
 			if c.game.ch.Idx() == channel.Index(data.NextActor) {
-				c.io.Print("Your turn.")
+				c.io.PrintWithPrefix("Your turn.")
 			} else {
-				c.io.Print("Waiting for other player.")
+				c.io.PrintWithPrefix("Waiting for other player.")
 			}
 		}
 	})
@@ -160,9 +160,9 @@ func (c *Client) initGame(ch *client.Channel) {
 	c.io.Print("New game started.\n" + c.game.String())
 	data := ch.State().Data.(*app.TicTacToeAppData)
 	if c.game.ch.Idx() == channel.Index(data.NextActor) {
-		c.io.Print("Your turn.")
+		c.io.PrintWithPrefix("Your turn.")
 	} else {
-		c.io.Print("Waiting for other player.")
+		c.io.PrintWithPrefix("Waiting for other player.")
 	}
 }
 

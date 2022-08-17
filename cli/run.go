@@ -56,8 +56,8 @@ func Run(init func(io IO) error, commands []Command) error {
 		}
 
 		// Run command loop.
-		io.out <- "\r" + Prefix
 		for input := range io.in {
+			io.out <- "\r" + Prefix
 			if len(input) == 0 {
 				io.out <- Prefix
 				continue

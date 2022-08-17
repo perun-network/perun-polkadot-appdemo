@@ -48,6 +48,10 @@ func (io IO) Run(reader *bufio.Reader, writer *bufio.Writer) error {
 }
 
 func (io IO) Print(msg string) {
+	io.out <- "\r" + msg + "\n"
+}
+
+func (io IO) PrintWithPrefix(msg string) {
 	io.out <- "\r" + msg + "\n" + Prefix
 }
 

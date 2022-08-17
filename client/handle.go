@@ -59,7 +59,7 @@ func (h handler) HandleProposal(p pclient.ChannelProposal, r *pclient.ProposalRe
 		proposer := lcp.Peers[proposerIdx]
 		stakeDot := DotFromPlanck(stake)
 		msg := fmt.Sprintf("Incoming game proposal: Player %v, stake = %v DOT.\nAccept? (accept/reject)", proposer, stakeDot)
-		h.io.Print(msg)
+		h.io.PrintWithPrefix(msg)
 		h.proposals <- Proposal{lcp, r}
 
 		return lcp, nil
@@ -84,7 +84,7 @@ func (h handler) HandleUpdate(cur *channel.State, next client.ChannelUpdate, r *
 // HandleAdjudicatorEvent is the callback for smart contract events.
 func (h handler) HandleAdjudicatorEvent(e channel.AdjudicatorEvent) {
 	p := func(msg string) {
-		h.io.Print(fmt.Sprintf("Received event: %v (GameID: %x)", msg, e.ID()))
+		h.io.PrintWithPrefix(fmt.Sprintf("Received event: %v (GameID: %x)", msg, e.ID()))
 	}
 	switch e := e.(type) {
 	case *channel.RegisteredEvent:
@@ -93,10 +93,10 @@ func (h handler) HandleAdjudicatorEvent(e channel.AdjudicatorEvent) {
 		p("State progressed")
 		d, ok := e.State.Data.(*app.TicTacToeAppData)
 		if !ok {
-			h.io.Print(fmt.Sprintf("Error reading app state: wrong type: expected *TicTacToeAppData, got %T", e.State.Data))
+			h.io.PrintWithPrefix(fmt.Sprintf("Error reading app state: wrong type: expected *TicTacToeAppData, got %T", e.State.Data))
 			break
 		}
-		h.io.Print(fmt.Sprintf("New game state:\n%v", d))
+		h.io.PrintWithPrefix(fmt.Sprintf("New game state:\n%v", d))
 	case *channel.ConcludedEvent:
 		p("Concluded")
 	default:
