@@ -9,29 +9,6 @@ import (
 )
 
 var commands = []cli.Command{
-	// {
-	// 	Name: "addpeer",
-	// 	Func: func(io cli.IO, args []string) {
-	// 		// Parse arguments.
-	// 		name := args[0]
-	// 		wireAddr, err := parseWireAddress(args[1])
-	// 		if err != nil {
-	// 			io.Print("Error parsing argument 2: " + err.Error())
-	// 			return
-	// 		}
-	// 		hostAddr := args[2]
-
-	// 		// Set peer address.
-	// 		err = Context(io).SetPeerAddress(name, wireAddr, hostAddr)
-	// 		if err != nil {
-	// 			io.Print("Error setting peer address: " + err.Error())
-	// 			return
-	// 		}
-
-	// 		io.Print(fmt.Sprintf("Added %v with wire address %v and network address %v to known peers.", name, wireAddr, hostAddr))
-	// 	},
-	// 	Help: "Usage: addpeer [name:string] [id:addr] [host:string]\nAdd client to list of known peers.",
-	// },
 	{
 		Name: "propose",
 		Func: func(io cli.IO, args []string) {
@@ -234,6 +211,29 @@ var commands = []cli.Command{
 			io.Print("Balance: " + dot.String() + " DOT")
 		},
 		Help: "Show my balance.",
+	},
+	{
+		Name: "addpeer",
+		Func: func(io cli.IO, args []string) {
+			// Parse arguments.
+			name := args[0]
+			wireAddr, err := parseWireAddress(args[1])
+			if err != nil {
+				io.Print("Error parsing argument 2: " + err.Error())
+				return
+			}
+			hostAddr := args[2]
+
+			// Set peer address.
+			err = Context(io).SetPeerAddress(name, wireAddr, hostAddr)
+			if err != nil {
+				io.Print("Error setting peer address: " + err.Error())
+				return
+			}
+
+			io.Print(fmt.Sprintf("Added %v with wire address %v and network address %v to known peers.", name, wireAddr, hostAddr))
+		},
+		Help: "Usage: addpeer [name:string] [id:addr] [host:string]\nAdd client to list of known peers.",
 	},
 	{
 		Name: "exit",
