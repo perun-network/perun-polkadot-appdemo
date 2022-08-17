@@ -54,7 +54,11 @@ func (d *TicTacToeAppData) Set(row, col int, actorIdx channel.Index) error {
 		return fmt.Errorf("invalid actor")
 	}
 	v := makeFieldValueFromPlayerIdx(actorIdx)
-	d.Grid[row*3+col] = v
+	i := row*3 + col
+	if i < 0 || i >= len(d.Grid) {
+		return fmt.Errorf("index out of bounds: %d", i)
+	}
+	d.Grid[i] = v
 	d.NextActor = calcNextActor(d.NextActor)
 	return nil
 }
