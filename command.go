@@ -207,6 +207,23 @@ var commands = []cli.Command{
 		Help: "Force the game to come to an end (e.g., if the other participant does not respond).",
 	},
 	{
+		Name: "state",
+		Func: func(io cli.IO, args []string) {
+			c, err := Context(io).Client()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+			g, err := c.Game()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+			io.Print("Current game state:\n" + g.String())
+		},
+		Help: "Show my balance.",
+	},
+	{
 		Name: "balance",
 		Func: func(io cli.IO, args []string) {
 			c, err := Context(io).Client()

@@ -51,7 +51,6 @@ force_quit
 ## TODO
 
 - Investigate why event subscription is slow on sender side.
-- Add command to show game state.
 - Add CI with linter.
 - Use interactive CI package (like gobata).
 - Handle game and update in package main, not in package client. Communicate via channels in handler.
