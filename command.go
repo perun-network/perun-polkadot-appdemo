@@ -179,7 +179,40 @@ var commands = []cli.Command{
 		Help: "Usage: force_mark [row:int] [column:int]\nEncforce action on-chain.",
 	},
 	{
-		Name: "force_quit",
+		Name: "conclude",
+		Func: func(io cli.IO, args []string) {
+			// Get game state.
+			c, err := Context(io).Client()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+			g, err := c.Game()
+			if err != nil {
+				io.Print(err.Error())
+				return
+			}
+
+			if !g.IsFinal() {
+				io.Print("Error: Game not final.")
+				return
+			}
+
+			// Close game.
+			io.Print("Closing game...")
+			ctx, cancel := c.NewTransactionContext()
+			defer cancel()
+			err = g.Settle(ctx)
+			if err != nil {
+				io.Print("Error closing game: " + err.Error())
+				return
+			}
+			io.Print("Done.")
+		},
+		Help: "Settle the game state and withdraw funds. Errors if the game is not final.",
+	},
+	{
+		Name: "force_conclude",
 		Func: func(io cli.IO, args []string) {
 			// Get game state.
 			c, err := Context(io).Client()
@@ -204,7 +237,7 @@ var commands = []cli.Command{
 			}
 			io.Print("Done.")
 		},
-		Help: "Force the game to come to an end (e.g., if the other participant does not respond).",
+		Help: "Settle the game state and withdraw funds. If the game is not final, game conclusion is being enforced.",
 	},
 	{
 		Name: "state",

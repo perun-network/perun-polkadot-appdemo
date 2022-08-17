@@ -34,7 +34,11 @@ mark 2 2
 ```
 mark 1 1
 ```
-8. Play until game is complete.
+8. Play until game is in final state.
+9. Conclude the game and withdraw funds.
+```
+conclude
+```
 
 ### Dispute
 
@@ -42,9 +46,9 @@ If the other client isn't responding, you can enforce an action on-chain.
 ```
 force_mark 3 3
 ```
-Alternatively, you can force quit a game.
+At any time, the game can be forced to an end. The funds will be payed out according to the most recent state.
 ```
-force_quit
+force_conclude
 ```
 
 

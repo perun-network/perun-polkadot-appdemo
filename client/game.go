@@ -78,6 +78,11 @@ func (g *Game) set(row, col int, state *channel.State) error {
 	return nil
 }
 
+// IsFinal returns whether the game is in a final state.
+func (g *Game) IsFinal() bool {
+	return g.ch.State().IsFinal
+}
+
 // Settle settles the app channel and withdraws the funds.
 func (g *Game) Settle(ctx context.Context) error {
 	err := g.ch.Settle(ctx, false)
