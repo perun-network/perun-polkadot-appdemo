@@ -55,6 +55,10 @@ func (io IO) PrintWithPrefix(msg string) {
 	io.out <- "\r" + msg + "\n" + Prefix
 }
 
+func (io IO) PrintPrefix() {
+	io.out <- "\r" + Prefix
+}
+
 func (io IO) SetContextValue(key string, value interface{}) {
 	io.context[key] = value
 }

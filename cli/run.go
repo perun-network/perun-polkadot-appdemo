@@ -26,6 +26,7 @@ func Run(init func(io IO) error, commands []Command) error {
 			errCh <- fmt.Errorf("intialize: %w", err)
 			return
 		}
+		io.out <- "\r" + Prefix
 
 		// Add help command.
 		commandMap := make(map[string]Command)
@@ -57,9 +58,8 @@ func Run(init func(io IO) error, commands []Command) error {
 
 		// Run command loop.
 		for input := range io.in {
-			io.out <- "\r" + Prefix
 			if len(input) == 0 {
-				io.out <- Prefix
+				io.out <- "\r" + Prefix
 				continue
 			}
 
@@ -78,6 +78,7 @@ func Run(init func(io IO) error, commands []Command) error {
 			// Execute command.
 			args := tokens[1:]
 			cmd.Func(io, args)
+			io.out <- "\r" + Prefix
 		}
 	}()
 
