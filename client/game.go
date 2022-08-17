@@ -95,6 +95,6 @@ func (g *Game) String() string {
 	if !ok {
 		panic(fmt.Sprintf("invalid data type: %T", data))
 	}
-	balances := dotsFromPlanks(g.ch.State().Balances[assetIdx])
+	balances := dotsFromPlancks(g.ch.State().Balances[assetIdx])
 	return fmt.Sprintf("Game ID: %x\nGame state:\n%v\nBalances: %v", g.ch.ID(), data.String(), balances)
 }

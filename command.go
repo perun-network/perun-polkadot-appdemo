@@ -46,7 +46,7 @@ var commands = []cli.Command{
 				io.Print(err.Error())
 				return
 			}
-			stakePlank := client.PlankFromDot(stake)
+			stakePlanck := client.PlanckFromDot(stake)
 
 			challengeDuration, err := Context(io).ChallengeDuration()
 			if err != nil {
@@ -70,7 +70,7 @@ var commands = []cli.Command{
 
 			// Propose game.
 			io.Print(fmt.Sprintf("Proposing game to %v (%v)...", peer, peerAddr))
-			_, err = c.ProposeGame(peerAddr, stakePlank, uint64(challengeDuration))
+			_, err = c.ProposeGame(peerAddr, stakePlanck, uint64(challengeDuration))
 			if err != nil {
 				io.Print("Error: " + err.Error())
 				return
@@ -230,7 +230,7 @@ var commands = []cli.Command{
 				io.Print(err.Error())
 				return
 			}
-			dot := client.DotFromPlank(bal.Int)
+			dot := client.DotFromPlanck(bal.Int)
 			io.Print("Balance: " + dot.String() + " DOT")
 		},
 		Help: "Show my balance.",

@@ -57,7 +57,7 @@ func (h handler) HandleProposal(p pclient.ChannelProposal, r *pclient.ProposalRe
 
 		// Propose to user.
 		proposer := lcp.Peers[proposerIdx]
-		stakeDot := DotFromPlank(stake)
+		stakeDot := DotFromPlanck(stake)
 		msg := fmt.Sprintf("Incoming game proposal: Player %v, stake = %v DOT.\nAccept? (accept/reject)", proposer, stakeDot)
 		h.io.Print(msg)
 		h.proposals <- Proposal{lcp, r}

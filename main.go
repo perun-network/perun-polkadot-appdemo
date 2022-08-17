@@ -53,7 +53,7 @@ func main() {
 		if err != nil {
 			return err
 		}
-		balDot := client.DotFromPlank(bal.Int)
+		balDot := client.DotFromPlanck(bal.Int)
 		io.Print(fmt.Sprintf("Balance: %v DOT", balDot.String()))
 
 		// Add Peers.

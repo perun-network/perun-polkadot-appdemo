@@ -124,7 +124,7 @@ func (c *Client) initGame(ch *client.Channel) {
 	// Handle updates.
 	ch.OnUpdate(func(from, to *channel.State) {
 		data := to.Data.(*app.TicTacToeAppData)
-		balances := dotsFromPlanks(to.Balances[assetIdx])
+		balances := dotsFromPlancks(to.Balances[assetIdx])
 		c.io.Print(fmt.Sprintf("***\nUpdated game state:\n%v\nBalances: %v", data.String(), balances))
 
 		// If final, settle.
