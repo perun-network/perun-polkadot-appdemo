@@ -2,19 +2,16 @@
 
 ## Test
 
-1. Start local Polkadot node with Perun Pallet at 127.0.0.1:9944.
-
-```sh
- docker run --rm -p 9944:9944 ghcr.io/perun-network/polkadot-test-node:0.2.0
-```
+1. Start a local Polkadot node with the Perun Pallet and the Tic Tac Toe app installed at 127.0.0.1:9944.
+You can do so by following the instructions at [perun-polkadot-node/wip-tictactoe](https://github.com/perun-network/perun-polkadot-node/tree/wip-tictactoe).
 
 2. Start client Alice in one terminal.
-```sh
+```
 go run . -cfg alice.config.json
 ```
 
 3. Then start client Bob in a second terminal.
-```sh
+```
 go run . -cfg bob.config.json
 ```
 
