@@ -23,29 +23,29 @@ propose bob 10
 ```
 accept
 ```
-6. In Alice's terminal, place the first mark, e.g., at `(2, 2)`.
+6. In Alice's terminal, set the first mark, e.g., at `(2, 2)`.
 ```
-mark 2 2
+set 2 2
 ```
-7. In Bob's terminal, place second next mark, e.g., at `(1, 1)`.
+7. In Bob's terminal, set the next mark, e.g., at `(1, 1)`.
 ```
-mark 1 1
+set 1 1
 ```
 8. Play until game is in final state.
-9. Conclude the game and withdraw funds.
+9. Conclude the game and withdraw the outcome.
 ```
-conclude
+settle
 ```
 
 ### Dispute
 
 If the other client isn't responding, you can enforce an action on-chain.
 ```
-force_mark 3 3
+force_set 3 3
 ```
 At any time, the game can be forced to an end. The funds will be payed out according to the most recent state.
 ```
-force_conclude
+force_settle
 ```
 
 

@@ -108,7 +108,7 @@ var commands = []cli.Command{
 		Help: "Reject incoming proposal.",
 	},
 	{
-		Name: "mark",
+		Name: "set",
 		Func: func(io cli.IO, args []string) {
 			// Parse arguments.
 			expectedLen := 2
@@ -131,7 +131,7 @@ var commands = []cli.Command{
 			}
 
 			// Perform game action.
-			io.Print(fmt.Sprintf("Proposing state update: place mark at (%v, %v)", row, column))
+			io.Print(fmt.Sprintf("Proposing state update: Set mark at (%v, %v)", row, column))
 			ctx, cancel := c.NewTransactionContext()
 			defer cancel()
 			err = g.Set(ctx, int(row)-1, int(column)-1)
@@ -140,10 +140,10 @@ var commands = []cli.Command{
 				return
 			}
 		},
-		Help: "Usage: mark [row:int] [column:int]\nPlace mark.",
+		Help: "Usage: set [row:int] [column:int]\nSet mark.",
 	},
 	{
-		Name: "force_mark",
+		Name: "force_set",
 		Func: func(io cli.IO, args []string) {
 			// Parse arguments.
 			expectedLen := 2
@@ -166,7 +166,7 @@ var commands = []cli.Command{
 			}
 
 			// Perform game action.
-			io.Print(fmt.Sprintf("Forcing state update: place mark at (%v, %v)", row, column))
+			io.Print(fmt.Sprintf("Forcing state update: Set mark at (%v, %v)", row, column))
 			ctx, cancel := c.NewTransactionContext()
 			defer cancel()
 			err = g.ForceSet(ctx, int(row)-1, int(column)-1)
@@ -176,10 +176,10 @@ var commands = []cli.Command{
 			}
 			io.Print("Done.")
 		},
-		Help: "Usage: force_mark [row:int] [column:int]\nEncforce action on-chain.",
+		Help: "Usage: force_set [row:int] [column:int]\nEncforce action on-chain.",
 	},
 	{
-		Name: "conclude",
+		Name: "settle",
 		Func: func(io cli.IO, args []string) {
 			// Get game state.
 			c, err := Context(io).Client()
@@ -212,7 +212,7 @@ var commands = []cli.Command{
 		Help: "Settle the game state and withdraw funds. Errors if the game is not final.",
 	},
 	{
-		Name: "force_conclude",
+		Name: "force_settle",
 		Func: func(io cli.IO, args []string) {
 			// Get game state.
 			c, err := Context(io).Client()
