@@ -71,7 +71,7 @@ func Run(init func(io IO) error, commands []Command) error {
 			cmd, ok := commandMap[name]
 			if !ok {
 				msg := fmt.Sprintf("Invalid command: %v\nEnter '%v' to show a list of valid commands.", name, helpCommand.Name)
-				io.Print(msg)
+				io.PrintWithPrefix(msg)
 				continue
 			}
 
