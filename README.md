@@ -51,6 +51,7 @@ force_settle
 
 ## TODO
 
+- Change balances in update.
 - Investigate why event subscription is slow on sender side.
 - Add CI with linter.
 - Use interactive CI package (like gobata).
