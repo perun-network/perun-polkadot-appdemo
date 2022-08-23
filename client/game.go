@@ -3,7 +3,6 @@ package client
 import (
 	"context"
 	"fmt"
-	"math/big"
 
 	"github.com/perun-network/perun-polkadot-appdemo/app"
 	"perun.network/go-perun/channel"
@@ -48,34 +47,13 @@ func (g *Game) applyAction(ctx context.Context, uf updaterFn, row, col int) erro
 }
 
 func (g *Game) set(row, col int, state *channel.State) error {
-	data, ok := state.Data.(*app.TicTacToeAppData)
+	app, ok := state.App.(*app.TicTacToeApp)
 	if !ok {
-		panic(fmt.Sprintf("invalid data type: %T", data))
+		panic(fmt.Sprintf("invalid app: %T", app))
 	}
 
-	err := data.Set(row, col, g.ch.Idx())
-	if err != nil {
-		return err
-	}
-
-	var winner *channel.Index
-	state.IsFinal, winner = data.CheckFinal()
-	if state.IsFinal {
-		sum := state.Balances.Sum()
-		if len(sum) != 1 {
-			panic(fmt.Sprintf("expected 1 asset, got %v", len(sum)))
-		}
-
-		balances := state.Balances[assetIdx]
-		for i, bal := range balances {
-			if i == int(*winner) {
-				bal.Set(sum[assetIdx])
-			} else {
-				bal.Set(big.NewInt(0))
-			}
-		}
-	}
-	return nil
+	err := app.Set(state, row, col, g.ch.Idx())
+	return err
 }
 
 // IsFinal returns whether the game is in a final state.

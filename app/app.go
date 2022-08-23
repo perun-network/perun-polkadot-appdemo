@@ -64,7 +64,7 @@ func (a *TicTacToeApp) ValidInit(p *channel.Params, s *channel.State) error {
 }
 
 // ValidTransition is called whenever the channel state transitions.
-func (a *TicTacToeApp) ValidTransition(params *channel.Params, from, to *channel.State, idx channel.Index) error {
+func (a *TicTacToeApp) ValidTransition(params *channel.Params, from, to *channel.State, actor channel.Index) error {
 	err := channel.AssertAssetsEqual(from.Assets, to.Assets)
 	if err != nil {
 		return fmt.Errorf("Invalid assets: %v", err)
@@ -81,8 +81,8 @@ func (a *TicTacToeApp) ValidTransition(params *channel.Params, from, to *channel
 	}
 
 	// Check actor.
-	if fromData.NextActor != uint8safe(uint16(idx)) {
-		return fmt.Errorf("invalid actor: expected %v, got %v", fromData.NextActor, idx)
+	if fromData.NextActor != uint8safe(uint16(actor)) {
+		return fmt.Errorf("invalid actor: expected %v, got %v", fromData.NextActor, actor)
 	}
 
 	// Check next actor.
@@ -115,22 +115,20 @@ func (a *TicTacToeApp) ValidTransition(params *channel.Params, from, to *channel
 		return fmt.Errorf("cannot skip turn")
 	}
 
-	// Check final and allocation.
+	// Check balances.
 	isFinal, winner := toData.CheckFinal()
 	if to.IsFinal != isFinal {
 		return fmt.Errorf("final flag: expected %v, got %v", isFinal, to.IsFinal)
 	}
 	expectedAllocation := from.Allocation.Clone()
-	if winner != nil {
-		expectedAllocation.Balances = computeFinalBalances(from.Allocation.Balances, *winner)
-	}
+	expectedAllocation.Balances = computeNextBalances(from.Allocation.Balances, actor, winner)
 	if err := expectedAllocation.Equal(&to.Allocation); err != nil {
 		return errors.WithMessagef(err, "wrong allocation: expected %v, got %v", expectedAllocation, to.Allocation)
 	}
 	return nil
 }
 
-func (a *TicTacToeApp) Set(s *channel.State, x, y int, actorIdx channel.Index) error {
+func (*TicTacToeApp) Set(s *channel.State, x, y int, actorIdx channel.Index) error {
 	d, ok := s.Data.(*TicTacToeAppData)
 	if !ok {
 		return fmt.Errorf("invalid data type: %T", d)
@@ -141,11 +139,8 @@ func (a *TicTacToeApp) Set(s *channel.State, x, y int, actorIdx channel.Index) e
 		return err
 	}
 
-	if isFinal, winner := d.CheckFinal(); isFinal {
-		s.IsFinal = true
-		if winner != nil {
-			s.Balances = computeFinalBalances(s.Balances, *winner)
-		}
-	}
+	isFinal, winner := d.CheckFinal()
+	s.IsFinal = isFinal
+	s.Balances = computeNextBalances(s.Balances, actorIdx, winner)
 	return nil
 }
