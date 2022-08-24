@@ -106,15 +106,22 @@ func uint8safe(a uint16) uint8 {
 	return b
 }
 
-func computeNextBalances(bals channel.Balances, actor channel.Index, winner *channel.Index) channel.Balances {
+func computeNextBalances(bals channel.Balances, actor channel.Index, final bool, winner *channel.Index) channel.Balances {
 	total := bals.Sum()
 	nextBals := bals.Clone()
 	for a, assetBals := range nextBals {
+		numParts := int64(len(assetBals))
+		assetTotal := total[a]
+		drawBal := new(big.Int).Div(assetTotal, big.NewInt(numParts))
+
 		for p, b := range assetBals {
 			p := channel.Index(p)
-			if winner != nil && *winner == p || actor == p {
+
+			if final && winner == nil { // Draw.
+				b.Set(drawBal)
+			} else if winner != nil && *winner == p || actor == p { // Party p won or is actor.
 				b.Set(total[a])
-			} else {
+			} else { // Party p lost or is not actor.
 				b.Set(big.NewInt(0))
 			}
 		}

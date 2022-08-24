@@ -121,7 +121,7 @@ func (a *TicTacToeApp) ValidTransition(params *channel.Params, from, to *channel
 		return fmt.Errorf("final flag: expected %v, got %v", isFinal, to.IsFinal)
 	}
 	expectedAllocation := from.Allocation.Clone()
-	expectedAllocation.Balances = computeNextBalances(from.Allocation.Balances, actor, winner)
+	expectedAllocation.Balances = computeNextBalances(from.Allocation.Balances, actor, isFinal, winner)
 	if err := expectedAllocation.Equal(&to.Allocation); err != nil {
 		return errors.WithMessagef(err, "wrong allocation: expected %v, got %v", expectedAllocation, to.Allocation)
 	}
@@ -141,6 +141,6 @@ func (*TicTacToeApp) Set(s *channel.State, x, y int, actorIdx channel.Index) err
 
 	isFinal, winner := d.CheckFinal()
 	s.IsFinal = isFinal
-	s.Balances = computeNextBalances(s.Balances, actorIdx, winner)
+	s.Balances = computeNextBalances(s.Balances, actorIdx, isFinal, winner)
 	return nil
 }
