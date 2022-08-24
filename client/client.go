@@ -144,10 +144,14 @@ func (c *Client) printGameState(state *channel.State) {
 
 	// Print next actor info.
 	if final, winner := data.CheckFinal(); final {
-		if c.game.ch.Idx() == *winner {
-			c.io.Print("You won.")
+		if winner == nil {
+			c.io.PrintWithPrefix("It's a draw.")
 		} else {
-			c.io.Print("Game over. You lost.")
+			if c.game.ch.Idx() == *winner {
+				c.io.PrintWithPrefix("You won.")
+			} else {
+				c.io.PrintWithPrefix("Game over. You lost.")
+			}
 		}
 	} else {
 		if c.game.ch.Idx() == channel.Index(data.NextActor) {

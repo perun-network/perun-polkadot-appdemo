@@ -198,8 +198,8 @@ var commands = []cli.Command{
 				return
 			}
 
-			// Close game.
-			io.Print("Closing game...")
+			// Conclude game and withdraw funds.
+			io.Print("Concluding game and withdrawing funds...")
 			ctx, cancel := c.NewTransactionContext()
 			defer cancel()
 			err = g.Settle(ctx)
@@ -226,8 +226,8 @@ var commands = []cli.Command{
 				return
 			}
 
-			// Close game.
-			io.Print("Closing game...")
+			// Conclude game and withdraw funds.
+			io.Print("Concluding game and withdrawing funds...")
 			ctx, cancel := c.NewTransactionContext()
 			defer cancel()
 			err = g.Settle(ctx)

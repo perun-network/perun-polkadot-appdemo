@@ -25,8 +25,13 @@ func (d *TicTacToeAppData) String() string {
 	fmt.Fprintf(&b, "%v|%v|%v\n", d.Grid[0], d.Grid[1], d.Grid[2])
 	fmt.Fprintf(&b, "%v|%v|%v\n", d.Grid[3], d.Grid[4], d.Grid[5])
 	fmt.Fprintf(&b, "%v|%v|%v\n", d.Grid[6], d.Grid[7], d.Grid[8])
+
 	if final, winner := d.CheckFinal(); final {
-		fmt.Fprintf(&b, "Winner: Player %v", *winner+1)
+		if winner == nil {
+			fmt.Fprint(&b, "It's a draw.")
+		} else {
+			fmt.Fprintf(&b, "Winner: Player %v", *winner+1)
+		}
 	} else {
 		fmt.Fprintf(&b, "Next actor: Player %v", d.NextActor+1)
 	}
