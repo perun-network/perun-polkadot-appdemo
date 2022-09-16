@@ -23,7 +23,9 @@ var _ channel.Data = &TicTacToeAppData{}
 func (d *TicTacToeAppData) String() string {
 	var b bytes.Buffer
 	fmt.Fprintf(&b, "%v|%v|%v\n", d.Grid[0], d.Grid[1], d.Grid[2])
+	fmt.Fprint(&b, "------\n")
 	fmt.Fprintf(&b, "%v|%v|%v\n", d.Grid[3], d.Grid[4], d.Grid[5])
+	fmt.Fprint(&b, "------\n")
 	fmt.Fprintf(&b, "%v|%v|%v\n", d.Grid[6], d.Grid[7], d.Grid[8])
 
 	if final, winner := d.CheckFinal(); final {
