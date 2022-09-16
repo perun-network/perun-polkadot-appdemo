@@ -1,6 +1,15 @@
-# Perun Polkadot App Demo
+# Perun App Demo on Polkadot
 
-## Test
+This repository demonstrates how to trustlessly play [Tic Tac Toe](https://en.wikipedia.org/wiki/Tic-tac-toe) for [Polkadot tokens](https://polkadot.network) in real time using [Perun Channels](https://github.com/perun-network/perun-polkadot-backend).
+
+## Repository structure
+
+* `app`: This package contains the off-chain definition of the Tic Tac Toe app.
+* `cli`: This package provides an abstraction for the CLI interface.
+* `client`: This package holds the Tic Tac Toe game client.
+
+
+## Test instructions
 
 1. Start a local Polkadot node with the Perun Pallet and the Tic Tac Toe app installed at 127.0.0.1:9944.
 You can do so by following the instructions at [perun-polkadot-node/wip-tictactoe](https://github.com/perun-network/perun-polkadot-node/tree/wip-tictactoe).
