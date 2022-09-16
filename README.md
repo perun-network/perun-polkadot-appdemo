@@ -51,8 +51,6 @@ force_settle
 
 ## TODO
 
-- Change balances in update.
 - Investigate why event subscription is slow on sender side.
 - Add CI with linter.
-- Use interactive CI package (like gobata).
-- Handle game and update in package main, not in package client. Communicate via channels in handler.
+- Use enhanced CLI package (like gobata).
