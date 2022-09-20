@@ -7,12 +7,12 @@ import (
 	"strings"
 )
 
-func Run(init func(io IO) error, commands []Command) error {
+func Run(init func(io *IO) error, commands []Command) error {
 	errCh := make(chan error)
 	defer close(errCh)
 
 	// Setup IO.
-	io := *NewIO()
+	io := NewIO()
 	reader := bufio.NewReader(os.Stdin)
 	writer := bufio.NewWriter(os.Stdout)
 	go func() {
@@ -33,7 +33,7 @@ func Run(init func(io IO) error, commands []Command) error {
 		helpName := "help"
 		helpCommand := Command{
 			Name: helpName,
-			Func: func(io IO, args []string) {
+			Func: func(io *IO, args []string) {
 				if len(args) == 1 {
 					name := args[0]
 					cmd, ok := commandMap[name]
@@ -77,7 +77,9 @@ func Run(init func(io IO) error, commands []Command) error {
 
 			// Execute command.
 			args := tokens[1:]
+			io.OmitPrefix(true)
 			cmd.Func(io, args)
+			io.OmitPrefix(false)
 			io.out <- "\r" + Prefix
 		}
 	}()

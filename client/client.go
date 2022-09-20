@@ -27,7 +27,7 @@ type Client struct {
 	acc         wallet.Address
 	wireAddr    wire.Address
 	app         *app.TicTacToeApp
-	io          cli.IO
+	io          *cli.IO
 	game        *Game
 	dialer      *simple.Dialer
 	api         *dot.API
@@ -43,7 +43,7 @@ func NewClient(
 	wireAccount wire.Account,
 	txTimeout time.Duration,
 	app *app.TicTacToeApp,
-	io cli.IO,
+	io *cli.IO,
 ) (*Client, error) {
 	// Setup wallet.
 	wallet, acc, err := setupWallet(sk)

@@ -27,7 +27,7 @@ func main() {
 	app := app.NewTicTacToeApp(cfg.App)
 	channel.RegisterApp(app)
 
-	init := func(io cli.IO) error {
+	init := func(io *cli.IO) error {
 		api, err := substrate.NewAPI(cfg.NodeURL, cfg.NetworkID)
 		if err != nil {
 			return err

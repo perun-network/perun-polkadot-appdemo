@@ -11,7 +11,7 @@ import (
 var commands = []cli.Command{
 	{
 		Name: "propose",
-		Func: func(io cli.IO, args []string) {
+		Func: func(io *cli.IO, args []string) {
 			// Parse arguments.
 			if len(args) != 2 {
 				io.Print("Invalid number of arguments.")
@@ -25,21 +25,21 @@ var commands = []cli.Command{
 			}
 			stakePlanck := client.PlanckFromDot(stake)
 
-			challengeDuration, err := Context(io).ChallengeDuration()
+			challengeDuration, err := (*Context)(io).ChallengeDuration()
 			if err != nil {
 				io.Print(err.Error())
 				return
 			}
 
 			// Get peer address.
-			peerAddr, err := Context(io).PeerAddress(peer)
+			peerAddr, err := (*Context)(io).PeerAddress(peer)
 			if err != nil {
 				io.Print(err.Error())
 				return
 			}
 
 			// Get client.
-			c, err := Context(io).Client()
+			c, err := (*Context)(io).Client()
 			if err != nil {
 				io.Print(err.Error())
 				return
@@ -59,8 +59,8 @@ var commands = []cli.Command{
 	},
 	{
 		Name: "accept",
-		Func: func(io cli.IO, args []string) {
-			c, err := Context(io).Client()
+		Func: func(io *cli.IO, args []string) {
+			c, err := (*Context)(io).Client()
 			if err != nil {
 				io.Print(err.Error())
 				return
@@ -83,8 +83,8 @@ var commands = []cli.Command{
 	},
 	{
 		Name: "reject",
-		Func: func(io cli.IO, args []string) {
-			c, err := Context(io).Client()
+		Func: func(io *cli.IO, args []string) {
+			c, err := (*Context)(io).Client()
 			if err != nil {
 				io.Print(err.Error())
 				return
@@ -109,7 +109,7 @@ var commands = []cli.Command{
 	},
 	{
 		Name: "set",
-		Func: func(io cli.IO, args []string) {
+		Func: func(io *cli.IO, args []string) {
 			// Parse arguments.
 			expectedLen := 2
 			if len(args) != expectedLen {
@@ -119,7 +119,7 @@ var commands = []cli.Command{
 			row, column := parseInt64(args[0]), parseInt64(args[1])
 
 			// Get game state.
-			c, err := Context(io).Client()
+			c, err := (*Context)(io).Client()
 			if err != nil {
 				io.Print(err.Error())
 				return
@@ -144,7 +144,7 @@ var commands = []cli.Command{
 	},
 	{
 		Name: "force_set",
-		Func: func(io cli.IO, args []string) {
+		Func: func(io *cli.IO, args []string) {
 			// Parse arguments.
 			expectedLen := 2
 			if len(args) != expectedLen {
@@ -154,7 +154,7 @@ var commands = []cli.Command{
 			row, column := parseInt64(args[0]), parseInt64(args[1])
 
 			// Get game state.
-			c, err := Context(io).Client()
+			c, err := (*Context)(io).Client()
 			if err != nil {
 				io.Print(err.Error())
 				return
@@ -180,9 +180,9 @@ var commands = []cli.Command{
 	},
 	{
 		Name: "settle",
-		Func: func(io cli.IO, args []string) {
+		Func: func(io *cli.IO, args []string) {
 			// Get game state.
-			c, err := Context(io).Client()
+			c, err := (*Context)(io).Client()
 			if err != nil {
 				io.Print(err.Error())
 				return
@@ -213,9 +213,9 @@ var commands = []cli.Command{
 	},
 	{
 		Name: "force_settle",
-		Func: func(io cli.IO, args []string) {
+		Func: func(io *cli.IO, args []string) {
 			// Get game state.
-			c, err := Context(io).Client()
+			c, err := (*Context)(io).Client()
 			if err != nil {
 				io.Print(err.Error())
 				return
@@ -241,8 +241,8 @@ var commands = []cli.Command{
 	},
 	{
 		Name: "state",
-		Func: func(io cli.IO, args []string) {
-			c, err := Context(io).Client()
+		Func: func(io *cli.IO, args []string) {
+			c, err := (*Context)(io).Client()
 			if err != nil {
 				io.Print(err.Error())
 				return
@@ -258,8 +258,8 @@ var commands = []cli.Command{
 	},
 	{
 		Name: "balance",
-		Func: func(io cli.IO, args []string) {
-			c, err := Context(io).Client()
+		Func: func(io *cli.IO, args []string) {
+			c, err := (*Context)(io).Client()
 			if err != nil {
 				io.Print(err.Error())
 				return
@@ -276,7 +276,7 @@ var commands = []cli.Command{
 	},
 	{
 		Name: "addpeer",
-		Func: func(io cli.IO, args []string) {
+		Func: func(io *cli.IO, args []string) {
 			// Parse arguments.
 			name := args[0]
 			wireAddr, err := parseWireAddress(args[1])
@@ -287,7 +287,7 @@ var commands = []cli.Command{
 			hostAddr := args[2]
 
 			// Set peer address.
-			err = Context(io).SetPeerAddress(name, wireAddr, hostAddr)
+			err = (*Context)(io).SetPeerAddress(name, wireAddr, hostAddr)
 			if err != nil {
 				io.Print("Error setting peer address: " + err.Error())
 				return
@@ -299,7 +299,7 @@ var commands = []cli.Command{
 	},
 	{
 		Name: "exit",
-		Func: func(io cli.IO, args []string) {
+		Func: func(io *cli.IO, args []string) {
 			os.Exit(0)
 		},
 		Help: "Exit program.",

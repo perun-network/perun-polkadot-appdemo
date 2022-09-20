@@ -16,8 +16,12 @@ const (
 
 type Context cli.IO
 
-func (c Context) Client() (*client.Client, error) {
-	cIface, ok := cli.IO(c).ContextValue(ContextKeyClient)
+func (c *Context) IO() *cli.IO {
+	return (*cli.IO)(c)
+}
+
+func (c *Context) Client() (*client.Client, error) {
+	cIface, ok := c.IO().ContextValue(ContextKeyClient)
 	if !ok {
 		return nil, fmt.Errorf("could not load client")
 	}
@@ -32,8 +36,8 @@ func (c Context) Client() (*client.Client, error) {
 
 type AddressBook map[string]wire.Address
 
-func (c Context) AddressBook() (AddressBook, error) {
-	addrBookIface, ok := cli.IO(c).ContextValue(ContextKeyAddressBook)
+func (c *Context) AddressBook() (AddressBook, error) {
+	addrBookIface, ok := c.IO().ContextValue(ContextKeyAddressBook)
 	if !ok {
 		return nil, fmt.Errorf("could not load address book")
 	}
@@ -45,7 +49,7 @@ func (c Context) AddressBook() (AddressBook, error) {
 	return addrBook, nil
 }
 
-func (c Context) PeerAddress(peer string) (wire.Address, error) {
+func (c *Context) PeerAddress(peer string) (wire.Address, error) {
 	// Load address book.
 	addrBook, err := c.AddressBook()
 	if err != nil {
@@ -61,7 +65,7 @@ func (c Context) PeerAddress(peer string) (wire.Address, error) {
 	return peerAddr, nil
 }
 
-func (c Context) SetPeerAddress(name string, wireAddr wire.Address, hostAddr string) error {
+func (c *Context) SetPeerAddress(name string, wireAddr wire.Address, hostAddr string) error {
 	// Load address book.
 	addrBook, err := c.AddressBook()
 	if err != nil {
@@ -81,8 +85,9 @@ func (c Context) SetPeerAddress(name string, wireAddr wire.Address, hostAddr str
 	return nil
 }
 
-func (c Context) ChallengeDuration() (uint64, error) {
-	durationIface, ok := cli.IO(c).ContextValue(ContextKeyChallengeDuration)
+func (c *Context) ChallengeDuration() (uint64, error) {
+	io := (*cli.IO)(c)
+	durationIface, ok := io.ContextValue(ContextKeyChallengeDuration)
 	if !ok {
 		return 0, fmt.Errorf("could not load challenge duration")
 	}
