@@ -59,3 +59,8 @@ At any time, the game can be forced to an end. The funds will be payed out accor
 ```
 force_settle
 ```
+
+## Copyright
+
+Copyright 2022 PolyCrypt GmbH.
+Use of the source code is governed by the [Apache License, Version 2.0](LICENSE).
