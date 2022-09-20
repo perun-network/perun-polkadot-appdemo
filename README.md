@@ -59,10 +59,3 @@ At any time, the game can be forced to an end. The funds will be payed out accor
 ```
 force_settle
 ```
-
-
-## TODO
-
-- Investigate why event subscription is slow on sender side.
-- Add CI with linter.
-- Use enhanced CLI package (like gobata).
