@@ -1,6 +1,6 @@
 # Perun App Demo on Polkadot
 
-This repository demonstrates how to trustlessly play [Tic Tac Toe](https://en.wikipedia.org/wiki/Tic-tac-toe) for [Polkadot tokens](https://polkadot.network) in real time using [Perun Channels](https://github.com/perun-network/perun-polkadot-backend).
+This repository demonstrates how to play [Tic Tac Toe](https://en.wikipedia.org/wiki/Tic-tac-toe) for [Polkadot tokens](https://polkadot.network) in real time using [Perun Channels](https://github.com/perun-network/perun-polkadot-backend).
 
 ## Repository structure
 
@@ -11,8 +11,11 @@ This repository demonstrates how to trustlessly play [Tic Tac Toe](https://en.wi
 
 ## Test instructions
 
-1. Start a local Polkadot node with the Perun Pallet and the Tic Tac Toe app installed at 127.0.0.1:9944.
-You can do so by following the instructions at [perun-polkadot-node/wip-tictactoe](https://github.com/perun-network/perun-polkadot-node/tree/wip-tictactoe).
+1. Start a local [Polkadot node  with the Perun Pallet](https://github.com/perun-network/perun-polkadot-node) and the Tic Tac Toe app installed.
+For example, you can do so using [Docker](https://www.docker.com).
+```
+docker run --rm -it -p9944:9944 ghcr.io/perun-network/polkadot-test-node:0.3.0
+```
 
 2. Start client Alice in one terminal.
 ```
