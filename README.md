@@ -1,15 +1,44 @@
-# Perun App Demo on Polkadot
+# `perun-polkadot-appdemo`: Trustlessly playing Tic-Tac-Toe for Polkadot tokens in Realtime using Perun App Channels
 
-This repository demonstrates how to play [Tic Tac Toe](https://en.wikipedia.org/wiki/Tic-tac-toe) for [Polkadot tokens](https://polkadot.network) in real time using [Perun Channels](https://github.com/perun-network/perun-polkadot-backend).
+This repository demonstrates a CLI client that uses [Perun Channels](https://github.com/hyperledger-labs/go-perun) for trustlessly playing [Tic-Tac-Toe](https://en.wikipedia.org/wiki/Tic-tac-toe) for [Polkadot tokens](https://polkadot.network) in real time.
 
-## Repository structure
+```
+> set 1 1
+Proposing state update: Set mark at (1, 1)
+Game state:
+x| | 
+------
+ | | 
+------
+ | | 
+Next actor: Player 2
+Balances: [20 0]
+Waiting for other player.
+```
 
-* `app`: This package contains the off-chain definition of the Tic Tac Toe app.
-* `cli`: This package provides an abstraction for the CLI interface.
-* `client`: This package holds the Tic Tac Toe game client.
+## Introduction
 
+The repository contains a CLI client that uses [perun-polkadot-backend](https://github.com/perun-network/perun-polkadot-backend) and [go-perun](https://github.com/hyperledger-labs/go-perun) to realize the functionality.
 
-## Test instructions
+* `app`: The off-chain definition of the Tic Tac Toe app.
+* `cli`: The CLI interface.
+* `client`: The Tic Tac Toe game client.
+
+The client can be started using [Go](https://go.dev).
+It takes as input a config file.
+```
+go run . -cfg alice.config.json
+```
+
+Once the client is started, an overview of the available commands can be printed using the `help` command.
+
+```
+> help
+```
+
+## Testrun instructions
+
+In the following, we describe how to test the client with a local Polkadot node.
 
 1. Start a local [Polkadot node  with the Perun Pallet](https://github.com/perun-network/perun-polkadot-node) and the Tic Tac Toe app installed.
 For example, you can do so using [Docker](https://www.docker.com).
@@ -59,6 +88,10 @@ At any time, the game can be forced to an end. The funds will be payed out accor
 ```
 force_settle
 ```
+
+## Funding
+
+This project has been supported through the German Ministry for Education and Research (BMBF) and the Web3 Foundation.
 
 ## Copyright
 
